@@ -1,158 +1,166 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Karakter Hikayen</title>
+<title>Character Story</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9131/9131529.png">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color: #fff;
-  overflow-x: hidden;
+body{
+margin:0;font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:#fff;
+height:100vh;display:flex;justify-content:center;align-items:center;
 }
-
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 20px;
+.container{width:100%;max-width:430px;padding:20px;}
+.card{
+background:rgba(0,0,0,.65);padding:25px;border-radius:22px;
+box-shadow:0 0 35px rgba(0,0,0,.8);animation:fade 1s ease;
 }
-
-.card {
-  background: rgba(0,0,0,0.45);
-  padding: 25px;
-  border-radius: 18px;
-  box-shadow: 0 0 25px rgba(0,0,0,.6);
-  animation: fadeIn 1s ease;
-}
-
-input, select, button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: none;
-  font-size: 16px;
-}
-
-button {
-  background: #ff9800;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #ffc107;
-}
-
-.hidden {
-  display: none;
-}
-
-#story {
-  animation: slideUp 1.2s ease;
-  line-height: 1.7;
-  font-size: 17px;
-}
-
-@keyframes fadeIn {
-  from {opacity:0;}
-  to {opacity:1;}
-}
-
-@keyframes slideUp {
-  from {transform: translateY(40px); opacity:0;}
-  to {transform: translateY(0); opacity:1;}
-}
+input,select,button{width:100%;padding:12px;margin:10px 0;border:none;border-radius:12px;font-size:16px;}
+button{background:linear-gradient(135deg,#ff9800,#ff5722);font-weight:bold;cursor:pointer;color:#000;}
+.hidden{display:none;}
+#story{animation:up 1.3s ease;line-height:1.8;}
+.controls{display:flex;gap:10px;margin-top:15px;}
+#langSelector{width:100%;padding:12px;margin-bottom:12px;border-radius:12px;border:none;font-size:16px;}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+@keyframes up{from{transform:translateY(60px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 </style>
 </head>
-
 <body>
-
 <div class="container">
 
-  <!-- ANKET -->
-  <div class="card" id="formCard">
-    <h2>🧠 Kendini Tanı</h2>
+<!-- Language Selector -->
+<select id="langSelector" onchange="changeLang()">
+<option value="tr">Türkçe</option>
+<option value="az">Azərbaycan</option>
+<option value="en">English</option>
+</select>
 
-    <input id="name" placeholder="Adın">
+<!-- Form -->
+<div class="card" id="formCard">
+<h2 id="formTitle">🧠 Kendini Tanı</h2>
+<input id="name" placeholder="Adın">
+<select id="character">
+<option value="">Karakterin</option>
+<option value="lider">Lider</option>
+<option value="savasci">Savaşçı</option>
+<option value="dusunen">Düşünen</option>
+<option value="yalniz">Yalnız Güç</option>
+<option value="hayalperest">Hayalperest</option>
+</select>
+<select id="fear">
+<option value="">En büyük korkun</option>
+<option value="basarisizlik">Başarısızlık</option>
+<option value="yalnizlik">Yalnızlık</option>
+<option value="kaybetmek">Kaybetmek</option>
+<option value="bilinmezlik">Bilinmezlik</option>
+</select>
+<button onclick="showStory()" id="showBtn">Hikayemi Göster</button>
+</div>
 
-    <select id="character">
-      <option value="">Karakterini seç</option>
-      <option value="lider">Lider ruhlu</option>
-      <option value="savasci">Savaşçı</option>
-      <option value="dusunen">Derin düşünen</option>
-      <option value="yalniz">Yalnız ama güçlü</option>
-      <option value="hayalperest">Hayalperest</option>
-    </select>
+<!-- Story / Result -->
+<div class="card hidden" id="resultCard" style="position:relative;">
+<div id="story"></div>
 
-    <select id="fear">
-      <option value="">En büyük korkun</option>
-      <option value="basarisizlik">Başarısızlık</option>
-      <option value="yalnizlik">Yalnız kalmak</option>
-      <option value="kaybetmek">Sevdiklerini kaybetmek</option>
-      <option value="bilinmezlik">Bilinmezlik</option>
-    </select>
-
-    <button onclick="createStory()">Hikayemi Göster</button>
-  </div>
-
-  <!-- HİKAYE -->
-  <div class="card hidden" id="storyCard">
-    <div id="story"></div>
-  </div>
+<div class="controls">
+<button onclick="toggleMusic()">🎵 Müzik</button>
+<button onclick="restart()">🔄 Yeniden</button>
+<button onclick="shareStory()">📤 Story Paylaş</button>
+</div>
+</div>
 
 </div>
 
+<audio id="music" loop></audio>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-function createStory() {
-  const name = document.getElementById("name").value || "Sen";
-  const character = document.getElementById("character").value;
-  const fear = document.getElementById("fear").value;
+let musicOn = true;
 
-  if(character === "" || fear === ""){
-    alert("Lütfen tüm seçimleri doldur");
-    return;
-  }
+const musicMap = {
+lider: "https://cdn.pixabay.com/audio/2022/10/03/audio_9466c93b7d.mp3",
+savasci: "https://cdn.pixabay.com/audio/2022/03/15/audio_3c6c79d2e4.mp3",
+dusunen: "https://cdn.pixabay.com/audio/2022/08/02/audio_5d9b9c9bb4.mp3",
+yalniz: "https://cdn.pixabay.com/audio/2021/09/06/audio_0c63d1b3c2.mp3",
+hayalperest: "https://cdn.pixabay.com/audio/2022/07/26/audio_4a5b36c6fa.mp3"
+};
 
-  document.getElementById("formCard").classList.add("hidden");
-  document.getElementById("storyCard").classList.remove("hidden");
+// Dil ve UI Metinleri
+const texts = {
+tr:{formTitle:"🧠 Kendini Tanı",showButton:"Hikayemi Göster",storyTitle:"✨ Hikayen",fearText:"seni tanımlar ama yönetemez.",restart:"🔄 Yeniden",music:"🎵 Müzik",download:"📸 Şəkil Yüklə"},
+az:{formTitle:"🧠 Özünü Tanı",showButton:"Hekayəni Göstər",storyTitle:"✨ Hekayən",fearText:"səni tanıyır amma idarə edə bilməz.",restart:"🔄 Yenidən",music:"🎵 Musiqi",download:"📸 Şəkili Yüklə"},
+en:{formTitle:"🧠 Know Yourself",showButton:"Show My Story",storyTitle:"✨ Your Story",fearText:"defines you but cannot control you.",restart:"🔄 Restart",music:"🎵 Music",download:"📸 Download Image"}
+};
 
-  const stories = {
-    lider: [
-      `${name}, sen doğuştan lider ruhlusun. İnsanlar fark etmese bile sen içten içe yolu görüyorsun. ${fear} seni durduramaz, çünkü sen baskı altında güçlenenlerdensin.`,
-      `${name}, senin liderliğin sessizdir ama etkilidir. Korkuların seni eğitmek için vardır, yenmek için değil.`
-    ],
-    savasci: [
-      `${name}, sen hayatla savaşanlardansın. Yorulsan da vazgeçmezsin. ${fear} senin için sadece bir eşiktir.`,
-      `${name}, sen düştüğünde bile ayağa kalkmayı bilen bir savaşçısın.`
-    ],
-    dusunen: [
-      `${name}, sen derin düşünenlerdensin. Herkes yüzeyi görür, sen özü. ${fear} seni zayıflatmaz, seni bilinçlendirir.`,
-      `${name}, zihnin senin en güçlü silahın.`
-    ],
-    yalniz: [
-      `${name}, sen yalnızlığı güçle taşıyanlardansın. ${fear} seni tanımlar ama yönetemez.`,
-      `${name}, sen sessiz ama sarsılmaz bir karaktere sahipsin.`
-    ],
-    hayalperest: [
-      `${name}, sen hayalleri olanlardansın. ${fear} seni korkutmaz çünkü sen geleceği görebiliyorsun.`,
-      `${name}, hayallerin seni ileri taşıyacak.`
-    ]
-  };
+// Hekayeler (her dil için ayrı)
+const stories = {
+tr:{lider:["Sen lider olarak doğdun...","Baskı altında parlayan nadir karakterlerdensin."],
+savasci:["Hayat seni kırmak için denedi...","Pes etmek senin kitabında yok."],
+dusunen:["Derin düşüncen seni farklı kılar...","Zihnin senin en güçlü silahın."],
+yalniz:["Yalnızlığın zayıflık değil, güç...","Sessiz ama sarsılmazsın."],
+hayalperest:["Hayallerin pusulan...","Sen sınırları aşabilirsin."]},
+az:{lider:["Sən lider olaraq doğulmusən...","Baskı altında parlayan nadir karakterlərdensən."],
+savasci:["Həyat səni sınadı amma pes etdinmi? Xeyr.","Hər düşüş səni daha da gücləndirdi."],
+dusunen:["Dərin düşüncən səni fərqləndirir.","Zihnin ən böyük gücündür."],
+yalniz:["Yalnızlıq zəiflik deyil, gücdür.","Səssiz amma sarsılmazsan."],
+hayalperest:["Xəyalların pusulandır...","Sən mümkün olmayanı görə bilirsən."]},
+en:{lider:["You were born a leader...","Pressure only makes you shine."],
+savasci:["Life tried to break you...","Giving up is not in your book."],
+dusunen:["Your deep thinking sets you apart.","Your mind is your strongest weapon."],
+yalniz:["Loneliness is not weakness, it's strength.","Silent but unshakable."],
+hayalperest:["Your dreams are your compass...","You can see beyond limits."]}
+};
 
-  const arr = stories[character];
-  const text = arr[Math.floor(Math.random()*arr.length)];
+function changeLang(){
+const l = document.getElementById("langSelector").value;
+document.querySelector("#formCard h2").innerText = texts[l].formTitle;
+document.querySelector("#showBtn").innerText = texts[l].showButton;
+}
 
-  document.getElementById("story").innerHTML = `
-    <h2>✨ Hikayen</h2>
-    <p>${text}</p>
-    <p><b>Unutma:</b> Sen sıradan biri değilsin. Yolun sana ait.</p>
-  `;
+function showStory(){
+const name = document.getElementById("name").value || "Sen";
+const c = document.getElementById("character").value;
+const f = document.getElementById("fear").value;
+const lang = document.getElementById("langSelector").value;
+if(!c || !f){alert("Tüm alanları doldur");return;}
+document.getElementById("formCard").classList.add("hidden");
+document.getElementById("resultCard").classList.remove("hidden");
+
+const storyArr = stories[lang][c];
+const storyText = storyArr[Math.floor(Math.random()*storyArr.length)];
+
+document.getElementById("story").innerHTML = `
+<h2>${texts[lang].storyTitle}</h2>
+<p>${storyText}</p>
+<p><b>Mesaj:</b> ${f} ${texts[lang].fearText}</p>
+<p>#CharacterStory #Motivation #SelfDiscovery</p>
+`;
+
+const m = document.getElementById("music");
+m.src = musicMap[c]; m.volume = 0.5; m.play(); musicOn = true;
+}
+
+function toggleMusic(){const m = document.getElementById("music"); musicOn ? m.pause() : m.play(); musicOn = !musicOn;}
+function restart(){document.getElementById("resultCard").classList.add("hidden"); document.getElementById("formCard").classList.remove("hidden"); document.getElementById("music").pause(); musicOn=false;}
+
+// Share / Story function
+async function shareStory(){
+const storyCard = document.getElementById("resultCard");
+const canvas = await html2canvas(storyCard);
+canvas.toBlob(async function(blob){
+const file = new File([blob],"story.png",{type:"image/png"});
+if(navigator.canShare && navigator.canShare({files:[file]})){
+await navigator.share({files:[file],title:"My Character Story",text:"Check out my story! #CharacterStory #Motivation"});
+} else {
+const link = document.createElement("a");
+link.href = canvas.toDataURL();
+link.download="story.png";
+link.click();
+alert("Şəkil yükləndi! İndi Instagram / TikTok / WhatsApp-da story kimi paylaşa bilərsiniz.");
+}
+});
 }
 </script>
-
 </body>
-</html> 
+</html>

@@ -2,7 +2,10 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Karakter Hikayen</title>
+<title>UstadHikaye – Kişilik ve Motivasyon Hikayen</title>
+<meta name="description" content="UstadHikaye ile karakterini keşfet. Motivasyon, kişilik analizi ve sana özel hikaye.">
+<meta name="keywords" content="ustadhikaye, hikaye testi, karakter hikayesi, motivasyon hikayesi, kişilik testi">
+<meta name="google-site-verification" content="BURAYA-GOOGLE-VERDİĞİ-KODU-YAZ"> <!-- Google doğrulama kodu buraya -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 20s ease infinite;}
@@ -26,15 +29,12 @@ button:hover{opacity:.9;transform:scale(1.05);}
 .tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center;}
 .flags img{width:40px;height:25px;margin:0 5px;cursor:pointer;border-radius:5px;border:2px solid #fff;}
 .flags img.selected{border:2px solid yellow;}
-.share-buttons{display:flex;justify-content:center;margin-top:15px;}
-.share-buttons button{margin:0 5px;padding:10px 12px;font-size:14px;border-radius:8px;cursor:pointer;background:#1db954;color:#fff;border:none;}
-.share-buttons button:hover{opacity:.85;transform:scale(1.05);}
 </style>
 </head>
 <body>
 <div class="container">
 
-<!-- Step 1: Dil Seçimi -->
+<!-- Dil Seçimi -->
 <div class="card" id="step1">
 <h1 id="welcomeText">Hoş geldin, hikayeni bulmak çok güzel!</h1>
 <div class="flags">
@@ -45,20 +45,20 @@ button:hover{opacity:.9;transform:scale(1.05);}
 <button onclick="start()">İleri</button>
 </div>
 
-<!-- Step 2: Anket -->
+<!-- Anket -->
 <div class="card" id="step2" style="display:none">
-<h1 id="surveyTitle">Anket</h1>
+<h1>Anket</h1>
 <input id="name" placeholder="Adın">
 <div class="selection">
-<p>Nasıl birisiniz: <span id="livePower">[seçim gözləyir]</span></p>
-<p>Ne'den korkuyorsunuz: <span id="liveFear">[seçim gözləyir]</span></p>
+<p>Necə birisən: <span id="livePower">[seçim gözləyir]</span></p>
+<p>Nədən qorxursan: <span id="liveFear">[seçim gözləyir]</span></p>
 </div>
 <select id="power" onchange="updateLive('power')"></select>
 <select id="fear" onchange="updateLive('fear')"></select>
-<button onclick="generate()" id="generateBtn">Hikayeni Gör</button>
+<button onclick="generate()">Hekayəni Gör</button>
 </div>
 
-<!-- Step 3: Hekaye -->
+<!-- Hekaye -->
 <div class="card" id="result" style="display:none">
 <div class="story" id="storyText"></div>
 
@@ -69,16 +69,18 @@ button:hover{opacity:.9;transform:scale(1.05);}
 
 <div class="magic-content" id="magicContent">
 <button onclick="playMusic()">🎵 Müziği Başlat</button>
-<p>🐺 Ruh Heyvanın: <span id="animal"></span></p>
-<p>💡 Tavsiye: <span id="advice"></span></p>
-<div class="share-buttons">
-<button onclick="share('whatsapp')">WhatsApp</button>
-<button onclick="share('instagram')">Instagram</button>
-<button onclick="share('tiktok')">TikTok</button>
-</div>
-</div>
+<p id="animal"></p>
+<p id="advice"></p>
 
 <div class="tags" id="tags"></div>
+
+<!-- Paylaşım Butonları -->
+<div style="margin-top:15px; text-align:center;">
+<button onclick="shareWhatsApp()">WhatsApp'ta Paylaş</button>
+<button onclick="shareInstagram()">Instagram'da Paylaş</button>
+<button onclick="shareTikTok()">TikTok'ta Paylaş</button>
+</div>
+
 </div>
 
 </div>
@@ -86,88 +88,60 @@ button:hover{opacity:.9;transform:scale(1.05);}
 <audio id="music" loop></audio>
 
 <script>
-let lang="tr"; 
-let clicks=0;
+let lang = "tr";
+let clicks = 0;
 
-// Çoklu melodiler
-const melodies={
-tr:["https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"],
-az:["https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"],
-en:["https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3","https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"]
+// Diller üçün ayarlar
+const langData = {
+tr:{
+welcome:"Hoş geldin, hikayeni bulmak çok güzel!",
+powerOptions:["Lider","Sabırlı","Cesur","Akıllı"],
+fearOptions:["Karanlık","Yalnız kalmak","Kaybetmek","Bilinmezlik"],
+stories:["{name}, sen {power} ruhlu bir insansın. Hayatında {fear} seni sınasa da, içindeki güç hep seni ayağa kaldırır. Bu yol kolay değil, ama sen bunu seçenlerden birisin."],
+animals:["Kurt","Aslan","Kartal","Ayı","Panter"],
+advices:["Yoluna inan ve devam et.","Cesur ol ve harekete geç.","Hayallerinin peşinden git.","Güçlü kal ve mücadele et."]
+},
+az:{
+welcome:"Xoş gəldin, hekayəni tapmaq çox gözəl!",
+powerOptions:["Lider","Səbirli","Cəsur","Ağıllı"],
+fearOptions:["Qaranlıq","Tək qalmaq","İtirmək","Naməlumluq"],
+stories:["{name}, sən {power} ruhlu bir insansan. Həyatında {fear} səni sınasa da, içindəki güc həmişə səni ayaqda saxlayır. Bu yol asan deyil, amma sən bunu seçənlərdənsən."],
+animals:["Qurd","Aslan","Qartal","Ayı","Panter"],
+advices:["Yoluna inan və davam et.","Cəsur ol və hərəkətə keç.","Xəyallarının ardınca get.","Güclü qal və mübarizə et."]
+},
+en:{
+welcome:"Welcome, finding your story is great!",
+powerOptions:["Leader","Patient","Brave","Smart"],
+fearOptions:["Darkness","Being alone","Losing","Unknown"],
+stories:["{name}, you are a {power} spirited person. In life, {fear} challenges you, but your inner strength always keeps you standing. This path is not easy, but you are one of the few who choose it."],
+animals:["Wolf","Lion","Eagle","Bear","Panther"],
+advices:["Believe in your path and move forward.","Be brave and take action.","Chase your dreams.","Stay strong and fight."]
+}
 };
 
-// Ruh heyvanları
-const animals={
-tr:["Qurd","Aslan","Şahin","Ayı","Panter"],
-az:["Qurd","Aslan","Şahin","Ayı","Panter"],
-en:["Wolf","Lion","Eagle","Bear","Panther"]
-};
-
-// Tavsiyeler
-const advices={
-tr:["Yoluna inan ve devam et.","Kendine güven, her şey mümkün.","Zorluklar seni güçlendirir.","Sabırlı ol ve pes etme.","Hayat kısa, fırsatları kaçırma."],
-az:["Yoluna inan və davam et.","Özünə güvən, hər şey mümkündür.","Çətinliklər səni gücləndirir.","Səbirli ol və vaz keçmə.","Həyat qısadır, fürsətləri qaçırma."],
-en:["Believe in your path and continue.","Trust yourself, everything is possible.","Challenges make you stronger.","Be patient and never give up.","Life is short, don't miss opportunities."]
-};
-
-// Hekaye template
-const stories={
-tr:["{name}, sen {power} ruhlu bir insansın. Hayatında {fear} seni sınasa da, içindeki güç hep seni ayağa kaldırır. Bu yol kolay değil, ama sen bunu seçenlerden birisin."],
-az:["{name}, sən {power} ruhlu bir insansan. Həyatında {fear} səni sınasa da, içindəki güc həmişə səni ayaqda saxlayır. Bu yol asan deyil, amma sən bunu seçənlərdənsən."],
-en:["{name}, you are a {power} spirited person. In life, {fear} challenges you, but your inner strength always keeps you standing. This path is not easy, but you are one of the few who choose it."]
-};
-
-// Seçenekler her dil için
-const powerOptions={
-tr:["Lider","Sabırlı","Cesur","Akıllı"],
-az:["Lider","Səbirli","Cəsur","Ağıllı"],
-en:["Leader","Patient","Brave","Smart"]
-};
-const fearOptions={
-tr:["Karanlık","Yalnız kalmak","Kaybetmek","Bilinmeyen"],
-az:["Qaranlıq","Tək qalmaq","İtirmək","Naməlumluq"],
-en:["Darkness","Being alone","Losing","Unknown"]
-};
-
-function setLang(l,el){
-lang=l;
+// Dil seçimi
+function setLang(l, el){
+lang = l;
 document.querySelectorAll(".flags img").forEach(i=>i.classList.remove("selected"));
 el.classList.add("selected");
-
-const welcomeText=document.getElementById("welcomeText");
-const surveyTitle=document.getElementById("surveyTitle");
-const nameInput=document.getElementById("name");
-const generateBtn=document.getElementById("generateBtn");
-
-if(lang==='tr'){
-welcomeText.innerText="Hoş geldin, hikayeni bulmak çok güzel!";
-surveyTitle.innerText="Anket";
-nameInput.placeholder="Adın";
-generateBtn.innerText="Hikayeni Gör";
-}else if(lang==='az'){
-welcomeText.innerText="Xoş gəldin, hekayəni tapmaq çox gözəl!";
-surveyTitle.innerText="Anket";
-nameInput.placeholder="Adın";
-generateBtn.innerText="Hekayəni Gör";
-}else{
-welcomeText.innerText="Welcome, finding your story is great!";
-surveyTitle.innerText="Survey";
-nameInput.placeholder="Your Name";
-generateBtn.innerText="See Your Story";
+document.getElementById("welcomeText").innerText = langData[lang].welcome;
+populateOptions();
 }
 
-// Anket seçeneklerini doldur
-const powerSelect=document.getElementById("power");
-const fearSelect=document.getElementById("fear");
-powerSelect.innerHTML="<option value=''>Seç</option>";
-fearSelect.innerHTML="<option value=''>Seç</option>";
-powerOptions[lang].forEach(opt=>{powerSelect.innerHTML+=`<option>${opt}</option>`;});
-fearOptions[lang].forEach(opt=>{fearSelect.innerHTML+=`<option>${opt}</option>`;});
+function populateOptions(){
+let powerSel = document.getElementById("power");
+let fearSel = document.getElementById("fear");
+powerSel.innerHTML = "";
+fearSel.innerHTML = "";
+langData[lang].powerOptions.forEach(p=>{powerSel.innerHTML+=`<option>${p}</option>`;});
+langData[lang].fearOptions.forEach(f=>{fearSel.innerHTML+=`<option>${f}</option>`;});
 }
 
+// Başla
 function start(){
 document.getElementById("step1").style.display="none";
 document.getElementById("step2").style.display="block";
+populateOptions();
 }
 
 function updateLive(type){
@@ -179,30 +153,29 @@ function generate(){
 let name=document.getElementById("name").value||"Sən";
 let power=document.getElementById("power").value||"Seçilməyib";
 let fear=document.getElementById("fear").value||"Seçilməyib";
-let template=stories[lang][0];
+let template=langData[lang].stories[0];
 let story=template.replace(/{name}/g,name).replace(/{power}/g,power).replace(/{fear}/g,fear);
-
 document.getElementById("step2").style.display="none";
 document.getElementById("result").style.display="block";
 document.getElementById("storyText").innerText=story;
+
+// Random animal və advice
+document.getElementById("animal").innerText = "🐾 Ruh Heyvanın: " + langData[lang].animals[Math.floor(Math.random()*langData[lang].animals.length)];
+document.getElementById("advice").innerText = "💡 Tavsiye: " + langData[lang].advices[Math.floor(Math.random()*langData[lang].advices.length)];
+
+// Tag
 document.getElementById("tags").innerText="#karakter #story #motivasyon";
 
-// Random animal ve advice
-document.getElementById("animal").innerText=animals[lang][Math.floor(Math.random()*animals[lang].length)];
-document.getElementById("advice").innerText=advices[lang][Math.floor(Math.random()*advices[lang].length)];
-
-// Random melody
-const music=document.getElementById("music");
-const melList=melodies[lang];
-music.src=melList[Math.floor(Math.random()*melList.length)];
+// Musiqi üçün default
+document.getElementById("music").src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-"+(Math.floor(Math.random()*16)+1)+".mp3";
 }
 
-const magicBox=document.getElementById("magicBox");
-magicBox.addEventListener("click",function(){
+const magicBox = document.getElementById("magicBox");
+magicBox.addEventListener("click", function(){
 clicks++;
-magicBox.style.transform=`rotate(${clicks*120}deg) scale(1.1)`;
-setTimeout(()=>{magicBox.style.transform=`rotate(${clicks*120}deg) scale(1)`;},200);
-const magicText=document.getElementById("magicText");
+magicBox.style.transform = `rotate(${clicks*120}deg) scale(1.1)`;
+setTimeout(()=>{magicBox.style.transform = `rotate(${clicks*120}deg) scale(1)`;},200);
+const magicText = document.getElementById("magicText");
 if(clicks>=3){
 document.getElementById("magicContent").style.display="block";
 magicText.innerText="🎵 Müziği Başlat ve dinle!";
@@ -218,18 +191,18 @@ alert("Telefonunuz səsi açmağa icazə vermir. Düyməyə basın və səsi aç
 });
 }
 
-// Paylaşım
-function share(platform){
-const storyText=document.getElementById("storyText").innerText;
-let url="";
-if(platform==="whatsapp") url=`https://wa.me/?text=${encodeURIComponent(storyText)}`;
-if(platform==="instagram") url=`https://www.instagram.com/`;
-if(platform==="tiktok") url=`https://www.tiktok.com/upload?lang=${lang}`;
-window.open(url,"_blank");
+// Paylaşma funksiyaları
+function shareWhatsApp(){
+let text = document.getElementById("storyText").innerText;
+window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+function shareInstagram(){
+alert("Instagram hikaye paylaşımı mobil app vasitəsilə mümkündür. Metni kopyalayın və paylaşın.");
+}
+function shareTikTok(){
+alert("TikTok paylaşımı mobil app vasitəsilə mümkündür. Metni kopyalayın və paylaşın.");
 }
 
-// Başlangıçta Türkçe ayarla
-setLang('tr',document.querySelector(".flags img.selected"));
 </script>
 </body>
 </html>

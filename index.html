@@ -5,12 +5,8 @@
 <title>Karakter Hikayen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;
-background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 18s ease infinite;}
+body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 18s ease infinite;}
 @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.lights span{position:fixed;width:8px;height:8px;background:rgba(255,255,255,.5);border-radius:50%;animation:float 12s linear infinite;}
-@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}100%{transform:translateY(-10vh);opacity:0}}
 .container{max-width:430px;margin:auto;padding:20px}
 .card{background:rgba(0,0,0,.6);padding:22px;border-radius:22px;box-shadow:0 0 25px rgba(0,0,0,.6);animation:fadeIn .8s ease;margin-bottom:20px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -18,25 +14,19 @@ h1{text-align:center;margin-top:0}
 select,input,button{width:100%;padding:12px;margin-top:12px;border-radius:12px;border:none;font-size:16px}
 button{background:#ff9800;color:#000;font-weight:bold;cursor:pointer}
 button:hover{opacity:.9}
+.selection{margin-bottom:15px;padding:12px;background:rgba(255,255,255,0.1);border-radius:12px;font-weight:bold}
 .story{font-size:16px;line-height:1.7;animation:type 1.2s ease}
 @keyframes type{from{opacity:0}to{opacity:1}}
-.magic{margin-top:25px;text-align:center;cursor:pointer}
-.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;animation:pulse 1.5s infinite;}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.magic{margin-top:25px;text-align:center;cursor:pointer;user-select:none}
+.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;transition:transform .5s;}
 .magic-content{display:none;margin-top:15px}
+.magic-text{margin-top:10px;font-size:14px;opacity:.8;text-align:center}
 .tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center}
-.selection{margin-bottom:15px;padding:12px;background:rgba(255,255,255,0.1);border-radius:12px;font-weight:bold}
 </style>
 </head>
 <body>
-<div class="lights">
-<span style="left:10%;animation-delay:0s"></span>
-<span style="left:30%;animation-delay:2s"></span>
-<span style="left:50%;animation-delay:4s"></span>
-<span style="left:70%;animation-delay:1s"></span>
-<span style="left:90%;animation-delay:3s"></span>
-</div>
 <div class="container">
+
 <!-- Step 1: Dil Seçimi -->
 <div class="card" id="step1">
 <h1>Dil Seç / Select Language</h1>
@@ -47,6 +37,7 @@ button:hover{opacity:.9}
 </select>
 <button onclick="start()">Devam</button>
 </div>
+
 <!-- Step 2: Anket -->
 <div class="card" id="step2" style="display:none">
 <h1>Anket</h1>
@@ -71,24 +62,31 @@ button:hover{opacity:.9}
 </select>
 <button onclick="generate()">Hekayəni Gör</button>
 </div>
+
 <!-- Step 3: Hekayə -->
 <div class="card" id="result" style="display:none">
 <div class="story" id="storyText"></div>
+
 <div class="magic" onclick="openMagic()">
 <div class="magic-box">🔮</div>
-<p>Sihirli Qutu</p>
+<p class="magic-text">Qutu 3 klikdən sonra açılacaq</p>
 </div>
+
 <div class="magic-content" id="magicContent">
 <button onclick="playMusic()">🎵 Musiqini Başlat</button>
 <p>🐺 Ruh Heyvanın: Qurd</p>
 <p>💡 Tövsiyə: Öz yoluna inan və davam et.</p>
 </div>
+
 <div class="tags" id="tags"></div>
 </div>
+
 </div>
+
 <audio id="music" loop>
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c76e8d1d3.mp3">
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c76e8d1d3.mp3" type="audio/mpeg">
 </audio>
+
 <script>
 let clicks=0;
 
@@ -119,7 +117,6 @@ let fear=document.getElementById("fear").value||"Seçilməyib";
 let lang=document.getElementById("lang").value;
 let template=stories[lang][0];
 let story=template.replace(/{name}/g,name).replace(/{power}/g,power).replace(/{fear}/g,fear);
-
 document.getElementById("step2").style.display="none";
 document.getElementById("result").style.display="block";
 document.getElementById("storyText").innerText=story;
@@ -128,13 +125,22 @@ document.getElementById("tags").innerText="#xarakter #hekaye #motivasiya #storyt
 
 function openMagic(){
 clicks++;
+const box=document.querySelector(".magic-box");
+box.style.transform=`rotate(${clicks*120}deg)`;
+const magicText=document.querySelector(".magic-text");
 if(clicks>=3){
 document.getElementById("magicContent").style.display="block";
+magicText.innerText="🎵 Musiqi düyməsini bas və dinlə!";
+}else{
+magicText.innerText=`Qutu açmaq üçün ${3-clicks} klik qalıb`;
 }
 }
 
 function playMusic(){
-document.getElementById("music").play();
+const music=document.getElementById("music");
+music.play().catch(err=>{
+alert("Telefonunuz səsi açmağa icazə vermir, düyməyə basın və səsi açın.");
+});
 }
 </script>
 </body>

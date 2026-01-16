@@ -98,6 +98,9 @@ button:hover{opacity:.9;transform:scale(1.05);}
 <audio id="music" loop></audio>
 
 <script>
+let lang = "tr";
+let clicks = 0;
+
 // Çoklu melodiler
 const melodies = {
 tr:[
@@ -128,9 +131,6 @@ const advices = [
 "Sabırlı ol ve pes etme.",
 "Hayat kısa, fırsatları kaçırma."
 ];
-
-let lang = "tr";
-let clicks = 0;
 
 function setLang(l, el){
 lang = l;
@@ -169,10 +169,10 @@ document.getElementById("result").style.display="block";
 document.getElementById("storyText").innerText=story;
 document.getElementById("tags").innerText="#karakter #story #motivasyon";
 
-// Random animal
+// Random animal ve advice
 document.getElementById("animal").innerText=animals[Math.floor(Math.random()*animals.length)];
-// Random advice
 document.getElementById("advice").innerText=advices[Math.floor(Math.random()*advices.length)];
+
 // Random melody
 const music=document.getElementById("music");
 const melList=melodies[lang];
@@ -209,7 +209,6 @@ if(platform==="instagram") url=`https://www.instagram.com/`;
 if(platform==="tiktok") url=`https://www.tiktok.com/upload?lang=${lang}`;
 window.open(url,"_blank");
 }
-
 </script>
 </body>
 </html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kişilik ve Hikaye Testi</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #1e3c72, #2a5298);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: rgba(0,0,0,0.45);
+    padding: 25px;
+    border-radius: 18px;
+    animation: fadeIn 1.2s;
+}
+
+h1 {
+    text-align: center;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #ff9800;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ffc107;
+}
+
+#storyPage {
+    display: none;
+    min-height: 100vh;
+    padding: 40px;
+    animation: slideUp 1s ease;
+}
+
+.story-box {
+    max-width: 700px;
+    margin: auto;
+    background: rgba(0,0,0,0.55);
+    padding: 30px;
+    border-radius: 20px;
+    line-height: 1.8;
+    font-size: 18px;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform:scale(0.95);}
+    to {opacity:1; transform:scale(1);}
+}
+
+@keyframes slideUp {
+    from {opacity:0; transform:translateY(60px);}
+    to {opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="formPage">
+    <h1>🧠 Kişilik Anketi</h1>
+
+    <input type="text" id="name" placeholder="Adın">
+
+    <select id="fear">
+        <option value="">En çok ne zorlar?</option>
+        <option value="yalnızlık">Yalnızlık</option>
+        <option value="başarısızlık">Başarısızlık</option>
+        <option value="gelecek">Gelecek kaygısı</option>
+        <option value="güvensizlik">İnsanlara güvenmek</option>
+    </select>
+
+    <select id="strength">
+        <option value="">En güçlü yanın?</option>
+        <option value="sabır">Sabır</option>
+        <option value="cesaret">Cesaret</option>
+        <option value="zeka">Zeka</option>
+        <option value="azim">Azim</option>
+    </select>
+
+    <button onclick="showStory()">Hikayemi Göster ✨</button>
+</div>
+
+<div id="storyPage">
+    <div class="story-box" id="storyText"></div>
+</div>
+
+<script>
+function showStory() {
+    const name = document.getElementById("name").value || "Bir İnsan";
+    const fear = document.getElementById("fear").value;
+    const strength = document.getElementById("strength").value;
+
+    if(!fear || !strength) {
+        alert("Lütfen tüm alanları doldur");
+        return;
+    }
+
+    const stories = [
+        `${name}, sen bu hayatta sessiz savaşlar verenlerdensin. 
+        ${fear} seni zaman zaman yorsa da, ${strength} senin gizli silahın oldu.
+        Kimse görmedi ama sen her düştüğünde daha güçlü kalktın.
+        Gün gelecek, bu sabrın seni çok farklı bir yere taşıyacak.`,
+
+        `${name}, kalbin fırtınalarla dolu olsa bile yolundan dönmedin.
+        ${fear} seni sınadı, ama ${strength} sayesinde yıkılmadın.
+        Sen pes etmeyenlerdensin. 
+        Hikayen henüz yeni başlıyor.`,
+
+        `${name}, herkes kaçarken sen durmayı ve düşünmeyi seçtin.
+        ${fear} seni korkutmadı, aksine olgunlaştırdı.
+        ${strength} ile birleşince seni özel biri yaptı.
+        Bu dünyada iz bırakacak insanlardansın.`,
+
+        `${name}, hayat seni kolay seçmedi.
+        ${fear} gecelerini aldı ama ${strength} sana gündüzleri kazandırdı.
+        Güçlü insanlar sessiz olur; sen bunun canlı örneğisin.`,
+
+        `${name}, senin hikayen sıradan değil.
+        ${fear} seni içten içe büyüttü.
+        ${strength} ise seni ayakta tuttu.
+        Bir gün herkes senin nereden nereye geldiğini merak edecek.`
+    ];
+
+    const randomStory = stories[Math.floor(Math.random() * stories.length)];
+
+    document.getElementById("formPage").style.display = "none";
+    document.getElementById("storyPage").style.display = "block";
+    document.getElementById("storyText").innerText = randomStory;
+}
+</script>
+
+</body>
+</html>

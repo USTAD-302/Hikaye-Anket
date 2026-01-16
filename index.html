@@ -20,8 +20,10 @@ button:hover{opacity:.9}
 .magic{margin-top:25px;text-align:center;cursor:pointer;user-select:none}
 .magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;transition:transform .5s;}
 .magic-content{display:none;margin-top:15px}
-.magic-text{margin-top:10px;font-size:14px;opacity:.8;text-align:center}
+.magic-text{margin-top:10px;font-size:14px;opacity:.9;text-align:center}
 .tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center}
+.flags img{width:40px;height:25px;margin:0 5px;cursor:pointer;border-radius:5px;border:2px solid #fff;}
+.flags img.selected{border:2px solid yellow;}
 </style>
 </head>
 <body>
@@ -29,13 +31,13 @@ button:hover{opacity:.9}
 
 <!-- Step 1: Dil Seçimi -->
 <div class="card" id="step1">
-<h1>Dil Seç / Select Language</h1>
-<select id="lang">
-<option value="az">Azərbaycan</option>
-<option value="tr">Türkçe</option>
-<option value="en">English</option>
-</select>
-<button onclick="start()">Devam</button>
+<h1 id="welcomeText">Hoş geldin, hikayeni bulmak çok güzel!</h1>
+<div class="flags">
+<img src="https://flagcdn.com/tr.svg" alt="TR" onclick="setLang('tr', this)" class="selected">
+<img src="https://flagcdn.com/az.svg" alt="AZ" onclick="setLang('az', this)">
+<img src="https://flagcdn.com/us.svg" alt="EN" onclick="setLang('en', this)">
+</div>
+<button onclick="start()">İleri</button>
 </div>
 
 <!-- Step 2: Anket -->
@@ -63,19 +65,19 @@ button:hover{opacity:.9}
 <button onclick="generate()">Hekayəni Gör</button>
 </div>
 
-<!-- Step 3: Hekayə -->
+<!-- Step 3: Hekaye -->
 <div class="card" id="result" style="display:none">
 <div class="story" id="storyText"></div>
 
-<div class="magic" onclick="openMagic()">
+<div class="magic">
 <div class="magic-box">🔮</div>
-<p class="magic-text">Qutu 3 klikdən sonra açılacaq</p>
+<p class="magic-text">Kutu 3 kez tıkla aç!</p>
 </div>
 
 <div class="magic-content" id="magicContent">
-<button onclick="playMusic()">🎵 Musiqini Başlat</button>
-<p>🐺 Ruh Heyvanın: Qurd</p>
-<p>💡 Tövsiyə: Öz yoluna inan və davam et.</p>
+<button onclick="playMusic()">🎵 Müziği Başlat</button>
+<p>🐺 Ruh Hayvanın: Qurd</p>
+<p>💡 Tavsiye: Yoluna inan ve devam et.</p>
 </div>
 
 <div class="tags" id="tags"></div>
@@ -84,17 +86,22 @@ button:hover{opacity:.9}
 </div>
 
 <audio id="music" loop>
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c76e8d1d3.mp3" type="audio/mpeg">
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-let clicks=0;
+let lang = "tr";
+let clicks = 0;
 
-const stories = {
-az: ["{name}, sən {power} ruhlu bir insansan. Həyatında {fear} səni sınasa da, hər dəfə içindəki güc səni ayaqda saxladı. Bu yol asan deyil, amma sən bu yolu seçənlərdənsən. Unutma {name}, bu dünyada sənin kimi insanlar azdır və məhz buna görə dəyərlisən."],
-tr: ["{name}, sen {power} ruhlu bir insansın. Hayatında {fear} seni sınasa da, her defasında içindeki güç seni ayaqda tuttu. Bu yol kolay değil, ama sen bunu seçenlerden birisin. Unutma {name}, senin gibi insanlar çok az ve bu yüzden değerlisin."],
-en: ["{name}, you are a {power} spirited person. In life, {fear} challenges you, but every time your inner strength keeps you standing. This path is not easy, but you are one of the few who choose it. Remember {name}, people like you are rare and valuable."]
-};
+function setLang(l, el){
+lang = l;
+document.querySelectorAll(".flags img").forEach(i=>i.classList.remove("selected"));
+el.classList.add("selected");
+const welcomeText = document.getElementById("welcomeText");
+if(lang==='tr') welcomeText.innerText="Hoş geldin, hikayeni bulmak çok güzel!";
+if(lang==='az') welcomeText.innerText="Xoş gəldin, hekayəni tapmaq çox gözəl!";
+if(lang==='en') welcomeText.innerText="Welcome, finding your story is great!";
+}
 
 function start(){
 document.getElementById("step1").style.display="none";
@@ -102,25 +109,26 @@ document.getElementById("step2").style.display="block";
 }
 
 function updateLive(type){
-if(type==='power'){
-document.getElementById("livePower").innerText=document.getElementById("power").value||"[seçim gözləyir]";
+if(type==='power') document.getElementById("livePower").innerText=document.getElementById("power").value||"[seçim gözləyir]";
+if(type==='fear') document.getElementById("liveFear").innerText=document.getElementById("fear").value||"[seçim gözləyir]";
 }
-if(type==='fear'){
-document.getElementById("liveFear").innerText=document.getElementById("fear").value||"[seçim gözləyir]";
-}
-}
+
+const stories = {
+tr:["{name}, sen {power} ruhlu bir insansın. Hayatında {fear} seni sınasa da, içindeki güç hep seni ayağa kaldırır. Bu yol kolay değil, ama sen bunu seçenlerden birisin."],
+az:["{name}, sən {power} ruhlu bir insansan. Həyatında {fear} səni sınasa da, içindəki güc həmişə səni ayaqda saxlayır. Bu yol asan deyil, amma sən bunu seçənlərdənsən."],
+en:["{name}, you are a {power} spirited person. In life, {fear} challenges you, but your inner strength always keeps you standing. This path is not easy, but you are one of the few who choose it."]
+};
 
 function generate(){
 let name=document.getElementById("name").value||"Sən";
 let power=document.getElementById("power").value||"Seçilməyib";
 let fear=document.getElementById("fear").value||"Seçilməyib";
-let lang=document.getElementById("lang").value;
 let template=stories[lang][0];
 let story=template.replace(/{name}/g,name).replace(/{power}/g,power).replace(/{fear}/g,fear);
 document.getElementById("step2").style.display="none";
 document.getElementById("result").style.display="block";
 document.getElementById("storyText").innerText=story;
-document.getElementById("tags").innerText="#xarakter #hekaye #motivasiya #storytime";
+document.getElementById("tags").innerText="#karakter #story #motivasyon";
 }
 
 function openMagic(){
@@ -130,16 +138,16 @@ box.style.transform=`rotate(${clicks*120}deg)`;
 const magicText=document.querySelector(".magic-text");
 if(clicks>=3){
 document.getElementById("magicContent").style.display="block";
-magicText.innerText="🎵 Musiqi düyməsini bas və dinlə!";
+magicText.innerText="🎵 Müziği Başlat ve dinle!";
 }else{
-magicText.innerText=`Qutu açmaq üçün ${3-clicks} klik qalıb`;
+magicText.innerText=`Kutu açmak için ${3-clicks} klik kaldı!`;
 }
 }
 
 function playMusic(){
 const music=document.getElementById("music");
 music.play().catch(err=>{
-alert("Telefonunuz səsi açmağa icazə vermir, düyməyə basın və səsi açın.");
+alert("Telefonunuz səsi açmağa icazə vermir. Düyməyə basın və səsi açın.");
 });
 }
 </script>

@@ -4,125 +4,31 @@
 <meta charset="UTF-8">
 <title>Karakter Hikayen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-/* ====== GLOBAL ====== */
 *{box-sizing:border-box}
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-color:#fff;
-overflow-x:hidden;
-background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);
-background-size:400% 400%;
-animation:bgMove 18s ease infinite;
-}
-
-/* Gradient animation */
-@keyframes bgMove{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
-}
-
-/* Floating lights */
-.lights span{
-position:fixed;
-width:8px;height:8px;
-background:rgba(255,255,255,.5);
-border-radius:50%;
-animation:float 12s linear infinite;
-}
-@keyframes float{
-0%{transform:translateY(100vh);opacity:0}
-10%{opacity:1}
-100%{transform:translateY(-10vh);opacity:0}
-}
-
-.container{
-max-width:430px;
-margin:auto;
-padding:20px;
-}
-
-.card{
-background:rgba(0,0,0,.6);
-padding:22px;
-border-radius:22px;
-box-shadow:0 0 25px rgba(0,0,0,.6);
-animation:fadeIn .8s ease;
-}
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
-}
-
+body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;
+background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 18s ease infinite;}
+@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.lights span{position:fixed;width:8px;height:8px;background:rgba(255,255,255,.5);border-radius:50%;animation:float 12s linear infinite;}
+@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}100%{transform:translateY(-10vh);opacity:0}}
+.container{max-width:430px;margin:auto;padding:20px}
+.card{background:rgba(0,0,0,.6);padding:22px;border-radius:22px;box-shadow:0 0 25px rgba(0,0,0,.6);animation:fadeIn .8s ease;margin-bottom:20px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 h1{text-align:center;margin-top:0}
-select,input,button{
-width:100%;
-padding:12px;
-margin-top:12px;
-border-radius:12px;
-border:none;
-font-size:16px;
-}
-button{
-background:#ff9800;
-color:#000;
-font-weight:bold;
-cursor:pointer;
-}
+select,input,button{width:100%;padding:12px;margin-top:12px;border-radius:12px;border:none;font-size:16px}
+button{background:#ff9800;color:#000;font-weight:bold;cursor:pointer}
 button:hover{opacity:.9}
-
-/* STORY */
-.story{
-font-size:16px;
-line-height:1.7;
-animation:type 1.2s ease;
-}
-@keyframes type{
-from{opacity:0}
-to{opacity:1}
-}
-
-/* MAGIC BOX */
-.magic{
-margin-top:25px;
-text-align:center;
-cursor:pointer;
-}
-.magic-box{
-width:120px;height:120px;
-margin:auto;
-border-radius:20px;
-background:linear-gradient(135deg,#ff9800,#ff5722);
-box-shadow:0 0 25px #ff9800;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:48px;
-animation:pulse 1.5s infinite;
-}
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.05)}
-100%{transform:scale(1)}
-}
+.story{font-size:16px;line-height:1.7;animation:type 1.2s ease}
+@keyframes type{from{opacity:0}to{opacity:1}}
+.magic{margin-top:25px;text-align:center;cursor:pointer}
+.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 .magic-content{display:none;margin-top:15px}
-
-/* TAGS */
-.tags{
-margin-top:15px;
-font-size:13px;
-opacity:.8;
-text-align:center;
-}
+.tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center}
+.selection{margin-bottom:15px;padding:12px;background:rgba(255,255,255,0.1);border-radius:12px;font-weight:bold}
 </style>
 </head>
-
 <body>
-
 <div class="lights">
 <span style="left:10%;animation-delay:0s"></span>
 <span style="left:30%;animation-delay:2s"></span>
@@ -130,9 +36,8 @@ text-align:center;
 <span style="left:70%;animation-delay:1s"></span>
 <span style="left:90%;animation-delay:3s"></span>
 </div>
-
 <div class="container">
-
+<!-- Step 1: Dil Seçimi -->
 <div class="card" id="step1">
 <h1>Dil Seç / Select Language</h1>
 <select id="lang">
@@ -142,17 +47,23 @@ text-align:center;
 </select>
 <button onclick="start()">Devam</button>
 </div>
-
+<!-- Step 2: Anket -->
 <div class="card" id="step2" style="display:none">
 <h1>Anket</h1>
 <input id="name" placeholder="Adın">
-<select id="power">
+<div class="selection">
+<p>Necə birisən: <span id="livePower">[seçim gözləyir]</span></p>
+<p>Nədən qorxursan: <span id="liveFear">[seçim gözləyir]</span></p>
+</div>
+<select id="power" onchange="updateLive('power')">
+<option value="">Seç</option>
 <option>Lider</option>
 <option>Səbirli</option>
 <option>Cəsur</option>
 <option>Ağıllı</option>
 </select>
-<select id="fear">
+<select id="fear" onchange="updateLive('fear')">
+<option value="">Seç</option>
 <option>Qaranlıq</option>
 <option>Tək qalmaq</option>
 <option>İtirmək</option>
@@ -160,46 +71,54 @@ text-align:center;
 </select>
 <button onclick="generate()">Hekayəni Gör</button>
 </div>
-
+<!-- Step 3: Hekayə -->
 <div class="card" id="result" style="display:none">
 <div class="story" id="storyText"></div>
-
 <div class="magic" onclick="openMagic()">
 <div class="magic-box">🔮</div>
 <p>Sihirli Qutu</p>
 </div>
-
 <div class="magic-content" id="magicContent">
 <button onclick="playMusic()">🎵 Musiqini Başlat</button>
 <p>🐺 Ruh Heyvanın: Qurd</p>
 <p>💡 Tövsiyə: Öz yoluna inan və davam et.</p>
 </div>
-
 <div class="tags" id="tags"></div>
 </div>
-
 </div>
-
 <audio id="music" loop>
 <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c76e8d1d3.mp3">
 </audio>
-
 <script>
 let clicks=0;
+
+const stories = {
+az: ["{name}, sən {power} ruhlu bir insansan. Həyatında {fear} səni sınasa da, hər dəfə içindəki güc səni ayaqda saxladı. Bu yol asan deyil, amma sən bu yolu seçənlərdənsən. Unutma {name}, bu dünyada sənin kimi insanlar azdır və məhz buna görə dəyərlisən."],
+tr: ["{name}, sen {power} ruhlu bir insansın. Hayatında {fear} seni sınasa da, her defasında içindeki güç seni ayaqda tuttu. Bu yol kolay değil, ama sen bunu seçenlerden birisin. Unutma {name}, senin gibi insanlar çok az ve bu yüzden değerlisin."],
+en: ["{name}, you are a {power} spirited person. In life, {fear} challenges you, but every time your inner strength keeps you standing. This path is not easy, but you are one of the few who choose it. Remember {name}, people like you are rare and valuable."]
+};
+
 function start(){
 document.getElementById("step1").style.display="none";
 document.getElementById("step2").style.display="block";
 }
 
+function updateLive(type){
+if(type==='power'){
+document.getElementById("livePower").innerText=document.getElementById("power").value||"[seçim gözləyir]";
+}
+if(type==='fear'){
+document.getElementById("liveFear").innerText=document.getElementById("fear").value||"[seçim gözləyir]";
+}
+}
+
 function generate(){
 let name=document.getElementById("name").value||"Sən";
-let power=document.getElementById("power").value;
-let fear=document.getElementById("fear").value;
-
-let story=`${name}, sən ${power} ruhlu bir insansan. 
-Həyatında ${fear} səni sınasa da, hər dəfə içindəki güc səni ayaqda saxladı. 
-Bu yol asan deyil, amma sən bu yolu seçənlərdənsən. 
-Unutma ${name}, bu dünyada sənin kimi insanlar azdır və məhz buna görə dəyərlisən.`;
+let power=document.getElementById("power").value||"Seçilməyib";
+let fear=document.getElementById("fear").value||"Seçilməyib";
+let lang=document.getElementById("lang").value;
+let template=stories[lang][0];
+let story=template.replace(/{name}/g,name).replace(/{power}/g,power).replace(/{fear}/g,fear);
 
 document.getElementById("step2").style.display="none";
 document.getElementById("result").style.display="block";
@@ -218,6 +137,5 @@ function playMusic(){
 document.getElementById("music").play();
 }
 </script>
-
 </body>
 </html>

@@ -5,23 +5,25 @@
 <title>Karakter Hikayen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 18s ease infinite;}
+body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c1c1c);background-size:400% 400%;animation:bgMove 20s ease infinite;}
 @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 .container{max-width:430px;margin:auto;padding:20px}
 .card{background:rgba(0,0,0,.6);padding:22px;border-radius:22px;box-shadow:0 0 25px rgba(0,0,0,.6);animation:fadeIn .8s ease;margin-bottom:20px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 h1{text-align:center;margin-top:0}
 select,input,button{width:100%;padding:12px;margin-top:12px;border-radius:12px;border:none;font-size:16px}
-button{background:#ff9800;color:#000;font-weight:bold;cursor:pointer}
-button:hover{opacity:.9}
+button{background:#ff9800;color:#000;font-weight:bold;cursor:pointer;transition:all .3s}
+button:hover{opacity:.9;transform:scale(1.05);}
 .selection{margin-bottom:15px;padding:12px;background:rgba(255,255,255,0.1);border-radius:12px;font-weight:bold}
 .story{font-size:16px;line-height:1.7;animation:type 1.2s ease}
 @keyframes type{from{opacity:0}to{opacity:1}}
-.magic{margin-top:25px;text-align:center;cursor:pointer;user-select:none}
-.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;transition:transform .5s;}
-.magic-content{display:none;margin-top:15px}
-.magic-text{margin-top:10px;font-size:14px;opacity:.9;text-align:center}
-.tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center}
+.magic{margin-top:25px;text-align:center;user-select:none;}
+.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;transition:all .4s;}
+.magic-box.active{transform:rotate(0deg) scale(1);}
+.magic-content{display:none;margin-top:15px;animation:fadeInContent .6s ease forwards;}
+@keyframes fadeInContent{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+.magic-text{margin-top:10px;font-size:14px;opacity:.9;text-align:center;transition:all .3s;}
+.tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center;}
 .flags img{width:40px;height:25px;margin:0 5px;cursor:pointer;border-radius:5px;border:2px solid #fff;}
 .flags img.selected{border:2px solid yellow;}
 </style>
@@ -70,13 +72,13 @@ button:hover{opacity:.9}
 <div class="story" id="storyText"></div>
 
 <div class="magic">
-<div class="magic-box">🔮</div>
-<p class="magic-text">Kutu 3 kez tıkla aç!</p>
+<div class="magic-box" id="magicBox">🔮</div>
+<p class="magic-text" id="magicText">Kutu 3 kez tıkla aç!</p>
 </div>
 
 <div class="magic-content" id="magicContent">
 <button onclick="playMusic()">🎵 Müziği Başlat</button>
-<p>🐺 Ruh Hayvanın: Qurd</p>
+<p>🐺 Ruh Heyvanın: Qurd</p>
 <p>💡 Tavsiye: Yoluna inan ve devam et.</p>
 </div>
 
@@ -131,18 +133,19 @@ document.getElementById("storyText").innerText=story;
 document.getElementById("tags").innerText="#karakter #story #motivasyon";
 }
 
-function openMagic(){
+const magicBox = document.getElementById("magicBox");
+magicBox.addEventListener("click", function(){
 clicks++;
-const box=document.querySelector(".magic-box");
-box.style.transform=`rotate(${clicks*120}deg)`;
-const magicText=document.querySelector(".magic-text");
+magicBox.style.transform = `rotate(${clicks*120}deg) scale(1.1)`;
+setTimeout(()=>{magicBox.style.transform = `rotate(${clicks*120}deg) scale(1)`;},200);
+const magicText = document.getElementById("magicText");
 if(clicks>=3){
 document.getElementById("magicContent").style.display="block";
 magicText.innerText="🎵 Müziği Başlat ve dinle!";
 }else{
 magicText.innerText=`Kutu açmak için ${3-clicks} klik kaldı!`;
 }
-}
+});
 
 function playMusic(){
 const music=document.getElementById("music");

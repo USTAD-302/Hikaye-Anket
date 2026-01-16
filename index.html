@@ -1,153 +1,158 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Kişilik ve Hikaye Testi</title>
+<title>Karakter Hikayen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(120deg, #1e3c72, #2a5298);
-    color: #fff;
-    overflow-x: hidden;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color: #fff;
+  overflow-x: hidden;
 }
 
 .container {
-    max-width: 500px;
-    margin: 40px auto;
-    background: rgba(0,0,0,0.45);
-    padding: 25px;
-    border-radius: 18px;
-    animation: fadeIn 1.2s;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
 }
 
-h1 {
-    text-align: center;
+.card {
+  background: rgba(0,0,0,0.45);
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(0,0,0,.6);
+  animation: fadeIn 1s ease;
 }
 
 input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
 }
 
 button {
-    background: #ff9800;
-    font-weight: bold;
-    cursor: pointer;
+  background: #ff9800;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 button:hover {
-    background: #ffc107;
+  background: #ffc107;
 }
 
-#storyPage {
-    display: none;
-    min-height: 100vh;
-    padding: 40px;
-    animation: slideUp 1s ease;
+.hidden {
+  display: none;
 }
 
-.story-box {
-    max-width: 700px;
-    margin: auto;
-    background: rgba(0,0,0,0.55);
-    padding: 30px;
-    border-radius: 20px;
-    line-height: 1.8;
-    font-size: 18px;
+#story {
+  animation: slideUp 1.2s ease;
+  line-height: 1.7;
+  font-size: 17px;
 }
 
 @keyframes fadeIn {
-    from {opacity:0; transform:scale(0.95);}
-    to {opacity:1; transform:scale(1);}
+  from {opacity:0;}
+  to {opacity:1;}
 }
 
 @keyframes slideUp {
-    from {opacity:0; transform:translateY(60px);}
-    to {opacity:1; transform:translateY(0);}
+  from {transform: translateY(40px); opacity:0;}
+  to {transform: translateY(0); opacity:1;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="formPage">
-    <h1>🧠 Kişilik Anketi</h1>
+<div class="container">
 
-    <input type="text" id="name" placeholder="Adın">
+  <!-- ANKET -->
+  <div class="card" id="formCard">
+    <h2>🧠 Kendini Tanı</h2>
+
+    <input id="name" placeholder="Adın">
+
+    <select id="character">
+      <option value="">Karakterini seç</option>
+      <option value="lider">Lider ruhlu</option>
+      <option value="savasci">Savaşçı</option>
+      <option value="dusunen">Derin düşünen</option>
+      <option value="yalniz">Yalnız ama güçlü</option>
+      <option value="hayalperest">Hayalperest</option>
+    </select>
 
     <select id="fear">
-        <option value="">En çok ne zorlar?</option>
-        <option value="yalnızlık">Yalnızlık</option>
-        <option value="başarısızlık">Başarısızlık</option>
-        <option value="gelecek">Gelecek kaygısı</option>
-        <option value="güvensizlik">İnsanlara güvenmek</option>
+      <option value="">En büyük korkun</option>
+      <option value="basarisizlik">Başarısızlık</option>
+      <option value="yalnizlik">Yalnız kalmak</option>
+      <option value="kaybetmek">Sevdiklerini kaybetmek</option>
+      <option value="bilinmezlik">Bilinmezlik</option>
     </select>
 
-    <select id="strength">
-        <option value="">En güçlü yanın?</option>
-        <option value="sabır">Sabır</option>
-        <option value="cesaret">Cesaret</option>
-        <option value="zeka">Zeka</option>
-        <option value="azim">Azim</option>
-    </select>
+    <button onclick="createStory()">Hikayemi Göster</button>
+  </div>
 
-    <button onclick="showStory()">Hikayemi Göster ✨</button>
-</div>
+  <!-- HİKAYE -->
+  <div class="card hidden" id="storyCard">
+    <div id="story"></div>
+  </div>
 
-<div id="storyPage">
-    <div class="story-box" id="storyText"></div>
 </div>
 
 <script>
-function showStory() {
-    const name = document.getElementById("name").value || "Bir İnsan";
-    const fear = document.getElementById("fear").value;
-    const strength = document.getElementById("strength").value;
+function createStory() {
+  const name = document.getElementById("name").value || "Sen";
+  const character = document.getElementById("character").value;
+  const fear = document.getElementById("fear").value;
 
-    if(!fear || !strength) {
-        alert("Lütfen tüm alanları doldur");
-        return;
-    }
+  if(character === "" || fear === ""){
+    alert("Lütfen tüm seçimleri doldur");
+    return;
+  }
 
-    const stories = [
-        `${name}, sen bu hayatta sessiz savaşlar verenlerdensin. 
-        ${fear} seni zaman zaman yorsa da, ${strength} senin gizli silahın oldu.
-        Kimse görmedi ama sen her düştüğünde daha güçlü kalktın.
-        Gün gelecek, bu sabrın seni çok farklı bir yere taşıyacak.`,
+  document.getElementById("formCard").classList.add("hidden");
+  document.getElementById("storyCard").classList.remove("hidden");
 
-        `${name}, kalbin fırtınalarla dolu olsa bile yolundan dönmedin.
-        ${fear} seni sınadı, ama ${strength} sayesinde yıkılmadın.
-        Sen pes etmeyenlerdensin. 
-        Hikayen henüz yeni başlıyor.`,
+  const stories = {
+    lider: [
+      `${name}, sen doğuştan lider ruhlusun. İnsanlar fark etmese bile sen içten içe yolu görüyorsun. ${fear} seni durduramaz, çünkü sen baskı altında güçlenenlerdensin.`,
+      `${name}, senin liderliğin sessizdir ama etkilidir. Korkuların seni eğitmek için vardır, yenmek için değil.`
+    ],
+    savasci: [
+      `${name}, sen hayatla savaşanlardansın. Yorulsan da vazgeçmezsin. ${fear} senin için sadece bir eşiktir.`,
+      `${name}, sen düştüğünde bile ayağa kalkmayı bilen bir savaşçısın.`
+    ],
+    dusunen: [
+      `${name}, sen derin düşünenlerdensin. Herkes yüzeyi görür, sen özü. ${fear} seni zayıflatmaz, seni bilinçlendirir.`,
+      `${name}, zihnin senin en güçlü silahın.`
+    ],
+    yalniz: [
+      `${name}, sen yalnızlığı güçle taşıyanlardansın. ${fear} seni tanımlar ama yönetemez.`,
+      `${name}, sen sessiz ama sarsılmaz bir karaktere sahipsin.`
+    ],
+    hayalperest: [
+      `${name}, sen hayalleri olanlardansın. ${fear} seni korkutmaz çünkü sen geleceği görebiliyorsun.`,
+      `${name}, hayallerin seni ileri taşıyacak.`
+    ]
+  };
 
-        `${name}, herkes kaçarken sen durmayı ve düşünmeyi seçtin.
-        ${fear} seni korkutmadı, aksine olgunlaştırdı.
-        ${strength} ile birleşince seni özel biri yaptı.
-        Bu dünyada iz bırakacak insanlardansın.`,
+  const arr = stories[character];
+  const text = arr[Math.floor(Math.random()*arr.length)];
 
-        `${name}, hayat seni kolay seçmedi.
-        ${fear} gecelerini aldı ama ${strength} sana gündüzleri kazandırdı.
-        Güçlü insanlar sessiz olur; sen bunun canlı örneğisin.`,
-
-        `${name}, senin hikayen sıradan değil.
-        ${fear} seni içten içe büyüttü.
-        ${strength} ise seni ayakta tuttu.
-        Bir gün herkes senin nereden nereye geldiğini merak edecek.`
-    ];
-
-    const randomStory = stories[Math.floor(Math.random() * stories.length)];
-
-    document.getElementById("formPage").style.display = "none";
-    document.getElementById("storyPage").style.display = "block";
-    document.getElementById("storyText").innerText = randomStory;
+  document.getElementById("story").innerHTML = `
+    <h2>✨ Hikayen</h2>
+    <p>${text}</p>
+    <p><b>Unutma:</b> Sen sıradan biri değilsin. Yolun sana ait.</p>
+  `;
 }
 </script>
 
 </body>
-</html>
+</html> 

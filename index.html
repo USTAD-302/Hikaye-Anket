@@ -26,6 +26,9 @@ button:hover{opacity:.9;transform:scale(1.05);}
 .tags{margin-top:15px;font-size:13px;opacity:.8;text-align:center;}
 .flags img{width:40px;height:25px;margin:0 5px;cursor:pointer;border-radius:5px;border:2px solid #fff;}
 .flags img.selected{border:2px solid yellow;}
+.share-buttons{display:flex;justify-content:center;margin-top:15px;}
+.share-buttons button{margin:0 5px;padding:10px 12px;font-size:14px;border-radius:8px;cursor:pointer;background:#1db954;color:#fff;border:none;}
+.share-buttons button:hover{opacity:.85;transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -78,8 +81,13 @@ button:hover{opacity:.9;transform:scale(1.05);}
 
 <div class="magic-content" id="magicContent">
 <button onclick="playMusic()">🎵 Müziği Başlat</button>
-<p>🐺 Ruh Heyvanın: Qurd</p>
-<p>💡 Tavsiye: Yoluna inan ve devam et.</p>
+<p>🐺 Ruh Heyvanın: <span id="animal"></span></p>
+<p>💡 Tavsiye: <span id="advice"></span></p>
+<div class="share-buttons">
+<button onclick="share('whatsapp')">WhatsApp</button>
+<button onclick="share('instagram')">Instagram</button>
+<button onclick="share('tiktok')">TikTok</button>
+</div>
 </div>
 
 <div class="tags" id="tags"></div>
@@ -87,11 +95,40 @@ button:hover{opacity:.9;transform:scale(1.05);}
 
 </div>
 
-<audio id="music" loop>
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<audio id="music" loop></audio>
 
 <script>
+// Çoklu melodiler
+const melodies = {
+tr:[
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+],
+az:[
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
+],
+en:[
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+]
+};
+
+// Ruh heyvanları
+const animals = ["Qurd","Aslan","Şahin","Ayı","Panter"];
+
+// Tavsiyeler
+const advices = [
+"Yoluna inan ve devam et.",
+"Kendine güven, her şey mümkün.",
+"Zorluklar seni güçlendirir.",
+"Sabırlı ol ve pes etme.",
+"Hayat kısa, fırsatları kaçırma."
+];
+
 let lang = "tr";
 let clicks = 0;
 
@@ -131,6 +168,15 @@ document.getElementById("step2").style.display="none";
 document.getElementById("result").style.display="block";
 document.getElementById("storyText").innerText=story;
 document.getElementById("tags").innerText="#karakter #story #motivasyon";
+
+// Random animal
+document.getElementById("animal").innerText=animals[Math.floor(Math.random()*animals.length)];
+// Random advice
+document.getElementById("advice").innerText=advices[Math.floor(Math.random()*advices.length)];
+// Random melody
+const music=document.getElementById("music");
+const melList=melodies[lang];
+music.src=melList[Math.floor(Math.random()*melList.length)];
 }
 
 const magicBox = document.getElementById("magicBox");
@@ -153,6 +199,17 @@ music.play().catch(err=>{
 alert("Telefonunuz səsi açmağa icazə vermir. Düyməyə basın və səsi açın.");
 });
 }
+
+// Paylaşım
+function share(platform){
+const storyText = document.getElementById("storyText").innerText;
+let url="";
+if(platform==="whatsapp") url=`https://wa.me/?text=${encodeURIComponent(storyText)}`;
+if(platform==="instagram") url=`https://www.instagram.com/`;
+if(platform==="tiktok") url=`https://www.tiktok.com/upload?lang=${lang}`;
+window.open(url,"_blank");
+}
+
 </script>
 </body>
 </html>

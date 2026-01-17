@@ -5,257 +5,179 @@
 <title>Hikayeni Bul</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
-  overflow-x:hidden;
-  color:#fff;
-}
-.container{
-  width:100%;
-  max-width:430px;
-  background:rgba(0,0,0,0.6);
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 0 25px rgba(0,0,0,0.5);
-  animation:fadeIn 1s ease;
-}
-h1,h2{text-align:center;margin-bottom:15px}
-p{text-align:center;opacity:.85;margin-bottom:15px}
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  background:#ff9800;
-  color:#000;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:12px;
-}
-button:hover{opacity:.85;transform:scale(1.03);transition:.2s;}
-input,select{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:none;font-size:15px;}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+body{height:100vh;overflow:hidden;color:#fff;background:radial-gradient(circle at top,#1b2735,#090a0f 60%),linear-gradient(120deg,#0f2027,#203a43,#2c5364);background-blend-mode:screen;}
+.stars{position:fixed;inset:0;background:url("https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png");animation:moveStars 120s linear infinite;opacity:.4;}
+@keyframes moveStars{0%{background-position:0 0}100%{background-position:-5000px 2000px}}
+.app{position:relative;max-width:420px;margin:auto;top:50%;transform:translateY(-50%);background:rgba(10,15,25,.65);backdrop-filter:blur(18px);border-radius:28px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.7);}
+h1{text-align:center;font-size:30px;font-weight:800;letter-spacing:.5px;margin-bottom:10px;}
+.subtitle{text-align:center;opacity:.85;margin-bottom:18px;}
+button{width:100%;margin-top:18px;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#ff9800,#ff5722);color:#000;transition:.3s;}
+button:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 25px rgba(255,152,0,.4);}
+input,select{width:100%;margin-top:12px;padding:14px;border-radius:14px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:15px;}
+input::placeholder{color:#ccc;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;}
+.option{padding:14px;text-align:center;border-radius:14px;background:rgba(255,255,255,.08);cursor:pointer;transition:.3s;}
+.option:hover{background:rgba(255,255,255,.18);}
+.option.active{background:linear-gradient(135deg,#4caf50,#8bc34a);color:#000;font-weight:700;box-shadow:0 0 15px #4caf50;}
+.story{margin-top:20px;line-height:1.8;font-size:15px;white-space:pre-wrap;}
+.orb-wrap{text-align:center;margin-top:20px;}
+.orb{width:110px;height:110px;margin:auto;border-radius:50%;background:radial-gradient(circle,#ffeb3b,#ff9800,#ff5722);box-shadow:0 0 40px gold;display:flex;align-items:center;justify-content:center;font-size:44px;cursor:pointer;animation:orbPulse 2s infinite;}
+@keyframes orbPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
 .hidden{display:none;}
-.option{
-  background:rgba(255,255,255,0.08);
-  padding:14px;
-  border-radius:12px;
-  margin-bottom:10px;
-  cursor:pointer;
-  text-align:center;
-  transition:.25s;
-  border:2px solid transparent;
-}
-.option:hover{background:rgba(255,255,255,0.15);}
-.option.active{
-  background:rgba(0,200,100,0.25);
-  border-color:#00ff9c;
-  box-shadow:0 0 12px rgba(0,255,160,0.6);
-  transform:scale(1.03);
-}
-.result-box{
-  background:rgba(255,255,255,0.08);
-  padding:15px;
-  border-radius:15px;
-  margin-top:15px;
-  animation:fadeIn 1s ease;
-}
-.animal{font-size:52px;text-align:center;margin:10px 0;}
-.socials{display:flex;justify-content:center;gap:12px;margin-top:15px;}
-.socials button{width:auto;padding:8px 14px;}
-.music-btn{margin-top:12px;}
-@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.magic-box{width:120px;height:120px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#ff9800,#ff5722);box-shadow:0 0 25px #ff9800;display:flex;align-items:center;justify-content:center;font-size:48px;cursor:pointer;transition:all .4s;}
-.magic-box:hover{transform:rotate(10deg) scale(1.05);}
-.magic-content{display:none;margin-top:15px;animation:fadeIn .6s ease forwards;}
-.magic-text{text-align:center;margin-top:10px;opacity:.9;}
+.fade{animation:fade .6s ease;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.socials{display:flex;justify-content:space-around;margin-top:18px;}
+.socials button{width:30%;padding:10px;font-size:14px;}
 </style>
 </head>
 <body>
+<div class="stars"></div>
+<div class="app">
 
-<div class="container">
+  <!-- STEP 1 -->
+  <div id="step1">
+    <h1>Hikayeni Bul</h1>
+    <p class="subtitle">İçindeki karakteri keşfet</p>
+    <button onclick="nextStep()">Başla</button>
+  </div>
 
-<!-- Dil seçimi -->
-<div id="lang">
-<h1 id="welcomeText">Hoş Geldin</h1>
-<p id="welcomeSub">Hikayeni bulmak çok güzel!</p>
-<div style="display:flex;justify-content:center;gap:10px;margin-bottom:15px;">
-<button onclick="setLang('tr')">🇹🇷 Türkçe</button>
-<button onclick="setLang('az')">🇦🇿 Azərbaycan</button>
-<button onclick="setLang('en')">🇬🇧 English</button>
+  <!-- STEP 2 -->
+  <div id="step2" class="hidden fade">
+    <h1>Seni Tanıyalım</h1>
+    <input id="name" placeholder="İsmini yaz">
+    <select id="gender">
+      <option value="">Cinsiyetini Seç</option>
+      <option value="Erkek">Erkek</option>
+      <option value="Kadın">Kadın</option>
+    </select>
+    <input id="age" type="number" placeholder="Yaşını yaz">
+    <div class="options" id="charOpts">
+      <div class="option" onclick="selectTrait(this,'lider')">Lider</div>
+      <div class="option" onclick="selectTrait(this,'bilge')">Bilge</div>
+      <div class="option" onclick="selectTrait(this,'cesur')">Cesur</div>
+      <div class="option" onclick="selectTrait(this,'sessiz')">Sessiz Güç</div>
+    </div>
+    <div class="options" id="fearOpts">
+      <div class="option" onclick="selectTrait(this,'karanlik')">Karanlık</div>
+      <div class="option" onclick="selectTrait(this,'tekKalmak')">Teke Kalmak</div>
+      <div class="option" onclick="selectTrait(this,'itirmek')">Kaybetmek</div>
+      <div class="option" onclick="selectTrait(this,'bilinmez')">Bilinmez</div>
+    </div>
+    <button onclick="finish()">Hikayeni Gör</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="hidden fade">
+    <h1>Senin Hikayen</h1>
+    <div class="story" id="story"></div>
+    <div class="orb-wrap">
+      <div class="orb" onclick="openOrb()">🔮</div>
+      <p style="margin-top:10px;font-size:13px;opacity:.85">Bu enerji senin yolunu temsil ediyor</p>
+    </div>
+    <div id="orbContent" class="hidden fade">
+      <p id="animal"></p>
+      <p id="advice"></p>
+      <button onclick="playMusic()">🎵 Müziği Başlat</button>
+    </div>
+    <div class="socials">
+      <button onclick="shareWhatsApp()">WhatsApp</button>
+      <button onclick="shareInstagram()">Instagram</button>
+      <button onclick="shareTikTok()">TikTok</button>
+    </div>
+    <button onclick="location.reload()">Yeniden Dene</button>
+  </div>
+
 </div>
-</div>
 
-<!-- Form -->
-<div id="form" class="hidden">
-<h2 id="formTitle"></h2>
-<input id="name" placeholder="">
-<select id="gender"></select>
-<select id="age"></select>
-
-<p id="q1"></p>
-<div id="charOpts"></div>
-
-<p id="q2"></p>
-<div id="fearOpts"></div>
-
-<button onclick="finish()">Hikayemi Göster</button>
-</div>
-
-<!-- Sonuç -->
-<div id="result" class="hidden">
-<h2 id="resTitle"></h2>
-<div class="animal" id="animal"></div>
-<div class="result-box">
-<p id="story"></p>
-<p id="advice"></p>
-<button class="music-btn" onclick="playMusic()">🎵 Müziği Başlat</button>
-<div class="socials">
-<button onclick="share('whatsapp')">WhatsApp</button>
-<button onclick="share('instagram')">Instagram</button>
-<button onclick="share('tiktok')">TikTok</button>
-</div>
-</div>
-
-<div class="magic">
-<div class="magic-box" id="magicBox">🔮</div>
-<p class="magic-text" id="magicText">Kutu 3 kez tıkla aç!</p>
-</div>
-<div class="magic-content" id="magicContent">
-<p>Burada ekstra bilgiler ve sürprizler var!</p>
-</div>
-
-</div>
-
-<audio id="music" loop></audio>
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-let L="tr", character=null, fear=null, clicks=0;
+let trait=""; let fear=""; let orbOpened=false;
 
-const data={
-tr:{title:"Kendini Keşfet",name:"Adını yaz",gender:["Cinsiyet seç","Erkek","Kadın"],
-age:["18-25","26-35","36-45","46+"],
-q1:"Nasıl birisin?",chars:["Lider","Sakin","Cesur","Düşünceli"],
-q2:"En büyük korkun?",fears:["Yalnızlık","Başarısızlık","Karanlık","Kaybetmek"],
-res:"Senin Hikayen",
-stories:{Lider:"{name}, sen doğuştan bir lidersin. İnsanlar farkında olmadan seni takip eder.",
-Sakin:"{name}, iç huzurun en büyük gücün. Zor zamanlarda bile ayakta kalırsın.",
-Cesur:"{name}, korkularının üzerine yürüyen nadir insanlardansın.",
-Düşünceli:"{name}, derin düşünen ve sezgileri güçlü birisin."},
-animals:["🐺","🦅","🦁","🐉","🦊"],
-advices:["Gücünü küçümseme.","Yalnız kalmaktan korkma.","Kendin olmaktan vazgeçme.","Sabırlı ol, zaman seninle."]},
-az:{title:"Özünü Kəşf Et",name:"Adını yaz",gender:["Cinsiyyət seç","Kişi","Qadın"],
-age:["18-25","26-35","36-45","46+"],
-q1:"Necə birisən?",chars:["Lider","Sakit","Cəsur","Düşüncəli"],
-q2:"Ən böyük qorxun?",fears:["Tənhalıq","Uğursuzluq","Qaranlıq","İtirmək"],
-res:"Sənin Hekayən",
-stories:{Lider:"{name}, sən fitri liderlik gücünə maliksən.",Sakit:"{name}, daxili sakitliyin səni güclü edir.",Cəsur:"{name}, qorxuların üzərinə gedənlərdənsən.",Düşüncəli:"{name}, dərin düşüncələrinlə seçilirsən."},
-animals:["🐺","🦅","🦁","🐉","🦊"],advices:["Öz gücünə inan.","Tələsmə.","Səbirli ol.","Öz yolundan dönmə."]},
-en:{title:"Discover Yourself",name:"Enter your name",gender:["Select gender","Male","Female"],
-age:["18-25","26-35","36-45","46+"],
-q1:"What are you like?",chars:["Leader","Calm","Brave","Thoughtful"],
-q2:"Your biggest fear?",fears:["Loneliness","Failure","Darkness","Loss"],
-res:"Your Story",
-stories:{Leader:"{name}, you are a natural born leader.",Calm:"{name}, your calm mind is your strength.",Brave:"{name}, you face fears head-on.",Thoughtful:"{name}, your mind sees what others miss."},
-animals:["🐺","🦅","🦁","🐉","🦊"],advices:["Trust yourself.","Stay patient.","Move forward.","Never give up."]}
-};
-
-function setLang(l){
-L=l;
-document.getElementById("lang").classList.add("hidden");
-document.getElementById("form").classList.remove("hidden");
-
-formTitle.innerText=data[L].title;
-name.placeholder=data[L].name;
-
-// Gender ve age
-gender.innerHTML="";
-data[L].gender.forEach(x=>{let o=document.createElement("option"); o.text=o.value=x; gender.add(o);});
-age.innerHTML="";
-data[L].age.forEach(x=>{let o=document.createElement("option"); o.text=o.value=x; age.add(o);});
-
-// Karakterler
-q1.innerText=data[L].q1;
-charOpts.innerHTML="";
-data[L].chars.forEach(c=>{
-let d=document.createElement("div");
-d.className="option"; d.innerText=c; d.dataset.value=c;
-d.onclick=()=>{document.querySelectorAll("#charOpts .option").forEach(o=>o.classList.remove("active")); d.classList.add("active"); character=c;};
-charOpts.appendChild(d);
-});
-
-// Korkular
-q2.innerText=data[L].q2;
-fearOpts.innerHTML="";
-data[L].fears.forEach(f=>{
-let d=document.createElement("div");
-d.className="option"; d.innerText=f; d.dataset.value=f;
-d.onclick=()=>{document.querySelectorAll("#fearOpts .option").forEach(o=>o.classList.remove("active")); d.classList.add("active"); fear=f;};
-fearOpts.appendChild(d);
-});
+function nextStep(){
+  step1.classList.add("hidden");
+  step2.classList.remove("hidden");
 }
 
-// Düzeltilmiş finish
+function selectTrait(el,val){
+  // Remove previous active
+  el.parentElement.querySelectorAll(".option").forEach(o=>o.classList.remove("active"));
+  el.classList.add("active");
+  if(el.parentElement.id=="charOpts") trait=val;
+  if(el.parentElement.id=="fearOpts") fear=val;
+}
+
+const data = {
+  stories:{
+    lider:"{name}, doğuştan lider ruhlusun. İnsanlar fark etmese bile, bulunduğun ortamın enerjisini değiştiriyorsun. Yalnız yürüdüğün yollar seni güçlü kılıyor.",
+    bilge:"{name}, sessiz ve bilge bir insansın. Sessizliğin içinde büyük bir güç saklı. Zaman senin lehine çalışıyor.",
+    cesur:"{name}, korkularının üstüne yürüyorsun. Her adımın bir sınav ama sen geri dönmüyorsun.",
+    sessiz:"{name}, görünmeyen ama hissedilen güçsün. Herkes konuşurken sen izliyorsun ve doğru anda hamleni yapıyorsun."
+  },
+  animals:["🐺 Kurt","🦅 Kartal","🐯 Kaplan","🦁 Aslan"],
+  advices:["Yoluna inan ve devam et","Sabırlı ol, kararlılıkla ilerle","Küçük adımlar büyük fark yaratır","Cesaretini kaybetme"]
+};
+
 function finish(){
-  const n = name.value.trim();
-  const g = gender.value;
-  const a = age.value;
+  let name=document.getElementById("name").value.trim();
+  let g=document.getElementById("gender").value;
+  let age=document.getElementById("age").value;
 
-  const charEl = document.querySelector("#charOpts .option.active");
-  const fearEl = document.querySelector("#fearOpts .option.active");
+  const charEl=document.querySelector("#charOpts .option.active");
+  const fearEl=document.querySelector("#fearOpts .option.active");
 
-  if(!n || !g || !a || !charEl || !fearEl){
+  if(!name || !g || !age || !charEl || !fearEl){
     alert("Lütfen tüm alanları doldur");
     return;
   }
 
-  character = charEl.dataset.value;
-  fear = fearEl.dataset.value;
-
-  form.classList.add("hidden");
+  step2.classList.add("hidden");
   result.classList.remove("hidden");
 
-  resTitle.innerText = data[L].res;
-  story.innerText = data[L].stories[character].replace("{name}", n);
-  animal.innerText = data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
-  advice.innerText = data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
+  // Typewriter effect
+  const storyEl=document.getElementById("story");
+  const text=data.stories[trait].replace("{name}",name);
+  storyEl.innerText="";
+  let i=0;
+  const typer=setInterval(()=>{
+    storyEl.innerText+=text[i]||"";
+    i++;
+    if(i>=text.length) clearInterval(typer);
+  },25);
+
+  // Random animal & advice
+  document.getElementById("animal").innerText="🐾 "+data.animals[Math.floor(Math.random()*data.animals.length)];
+  document.getElementById("advice").innerText="💡 "+data.advices[Math.floor(Math.random()*data.advices.length)];
 }
 
-// MUSİQİ
-const musicList = [
-"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-];
+// Orb
+function openOrb(){
+  if(!orbOpened){
+    document.getElementById("orbContent").classList.remove("hidden");
+    orbOpened=true;
+  }
+}
+
+// Music
 function playMusic(){
-const music=document.getElementById("music");
-music.src=musicList[Math.floor(Math.random()*musicList.length)];
-music.play().catch(()=>alert("Lütfen cihazınızda sesi açın."));
+  const music=document.getElementById("music");
+  const sources=["https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                 "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"];
+  const randomSrc=sources[Math.floor(Math.random()*sources.length)];
+  music.src=randomSrc;
+  music.play().catch(()=>alert("Telefonunuzda ses açılmalıdır!"));
 }
 
-// SOSİAL
-function share(platform){
-let text=story.innerText+" "+advice.innerText;
-if(platform==="whatsapp") window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');
-if(platform==="instagram") alert("Instagram direkt paylaşım desteklemiyor, ekran görüntüsü alabilirsin.");
-if(platform==="tiktok") alert("TikTok direkt paylaşım desteklemiyor, ekran görüntüsü alabilirsin.");
-}
+// Social share
+function shareWhatsApp(){window.open("https://api.whatsapp.com/send?text="+encodeURIComponent(document.getElementById("story").innerText));}
+function shareInstagram(){alert("Instagram story paylaşımı için ekran görüntüsü alıp paylaşmanız gerekmektedir.");}
+function shareTikTok(){alert("TikTok paylaşımı için ekran görüntüsü alıp paylaşmanız gerekmektedir.");}
 
-// SIHİRLİ KUTU
-const magicBox = document.getElementById("magicBox");
-magicBox.addEventListener("click",()=>{
-clicks++; magicBox.style.transform=`rotate(${clicks*120}deg) scale(1.1)`; setTimeout(()=>{magicBox.style.transform=`rotate(${clicks*120}deg) scale(1)`;},200);
-const magicText=document.getElementById("magicText");
-if(clicks>=3){document.getElementById("magicContent").style.display="block"; magicText.innerText="🎵 Müziği Başlat ve sürprizi gör!";}
-else magicText.innerText=`Kutu açmak için ${3-clicks} klik kaldı!`;
-});
 </script>
-
-<audio id="music" loop></audio>
 </body>
 </html>

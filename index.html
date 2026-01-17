@@ -1,145 +1,7 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<title>Hikayeni Tap</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{
-  min-height:100vh;
-  background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-.container{
-  width:100%;
-  max-width:420px;
-  background:rgba(0,0,0,.55);
-  border-radius:20px;
-  padding:25px;
-  animation:fadeIn 1s ease;
-}
-h1,h2{text-align:center;margin-bottom:15px}
-p{text-align:center;opacity:.85;margin-bottom:15px}
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  background:#ff9800;
-  color:#000;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:12px;
-}
-button:hover{opacity:.85}
-input,select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-bottom:12px;
-  font-size:15px;
-}
-.hidden{display:none}
-
-/* SEÇENEKLER */
-.option{
-  background:rgba(255,255,255,.08);
-  padding:14px;
-  border-radius:12px;
-  margin-bottom:10px;
-  cursor:pointer;
-  text-align:center;
-  transition:.25s;
-  border:2px solid transparent;
-}
-.option:hover{
-  background:rgba(255,255,255,.15);
-}
-.option.active{
-  background:rgba(0,200,100,.25);
-  border-color:#00ff9c;
-  box-shadow:0 0 12px rgba(0,255,160,.6);
-  transform:scale(1.03);
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:scale(.95)}
-  to{opacity:1;transform:scale(1)}
-}
-
-.result-box{
-  background:rgba(255,255,255,.08);
-  padding:15px;
-  border-radius:15px;
-  margin-top:15px;
-}
-.animal{
-  font-size:52px;
-  text-align:center;
-  margin:10px 0;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<!-- DİL -->
-<div id="lang">
-  <h1>Hoş Geldin</h1>
-  <p>Hikayeni bulmak için dil seç</p>
-  <button onclick="setLang('tr')">🇹🇷 Türkçe</button>
-  <button onclick="setLang('az')">🇦🇿 Azərbaycan</button>
-  <button onclick="setLang('en')">🇬🇧 English</button>
-</div>
-
-<!-- FORM -->
-<div id="form" class="hidden">
-  <h2 id="formTitle"></h2>
-
-  <input id="name" placeholder="">
-  
-  <select id="gender"></select>
-
-  <select id="age">
-    <option value="">---</option>
-    <option>18-25</option>
-    <option>26-35</option>
-    <option>36-45</option>
-    <option>46+</option>
-  </select>
-
-  <p id="q1"></p>
-  <div id="charOpts"></div>
-
-  <p id="q2"></p>
-  <div id="fearOpts"></div>
-
-  <button onclick="finish()">Hikayemi Göster</button>
-</div>
-
-<!-- RESULT -->
-<div id="result" class="hidden">
-  <h2 id="resTitle"></h2>
-  <div class="animal" id="animal"></div>
-  <div class="result-box">
-    <p id="story"></p>
-    <p id="advice"></p>
-  </div>
-</div>
-
-</div>
-
 <script>
-let L="tr", character="", fear="";
+let L="tr";
+let character=null;
+let fear=null;
 
 const data={
 tr:{
@@ -236,10 +98,11 @@ data[L].chars.forEach(c=>{
 let d=document.createElement("div");
 d.className="option";
 d.innerText=c;
+d.dataset.value=c;
 d.onclick=()=>{
 document.querySelectorAll("#charOpts .option").forEach(o=>o.classList.remove("active"));
 d.classList.add("active");
-character=c;
+character=d.dataset.value;
 };
 charOpts.appendChild(d);
 });
@@ -249,18 +112,22 @@ data[L].fears.forEach(f=>{
 let d=document.createElement("div");
 d.className="option";
 d.innerText=f;
+d.dataset.value=f;
 d.onclick=()=>{
 document.querySelectorAll("#fearOpts .option").forEach(o=>o.classList.remove("active"));
 d.classList.add("active");
-fear=f;
+fear=d.dataset.value;
 };
 fearOpts.appendChild(d);
 });
 }
 
 function finish(){
-const n=name.value;
-if(!n||!character||!fear){alert("Lütfen tüm alanları doldur");return;}
+const n=name.value.trim();
+if(n==="" || character===null || fear===null){
+alert("Lütfen tüm alanları doldur");
+return;
+}
 
 form.classList.add("hidden");
 result.classList.remove("hidden");
@@ -270,10 +137,6 @@ resTitle.innerText=data[L].res;
 story.innerText=data[L].stories[character].replace("{name}",n);
 
 animal.innerText=data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
-
 advice.innerText=data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
 }
 </script>
-
-</body>
-</html>

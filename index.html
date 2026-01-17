@@ -132,11 +132,7 @@ input,select{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;borde
 
 </div>
 
-<audio id="music" loop>
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
-</audio>
+<audio id="music" loop></audio>
 
 <script>
 let L="tr", character=null, fear=null, clicks=0;
@@ -177,43 +173,57 @@ document.getElementById("form").classList.remove("hidden");
 formTitle.innerText=data[L].title;
 name.placeholder=data[L].name;
 
+// Gender ve age
 gender.innerHTML="";
-data[L].gender.forEach(x=>{
-let o=document.createElement("option"); o.text=o.value=x; gender.add(o);
-});
+data[L].gender.forEach(x=>{let o=document.createElement("option"); o.text=o.value=x; gender.add(o);});
 age.innerHTML="";
-data[L].age.forEach(x=>{
-let o=document.createElement("option"); o.text=o.value=x; age.add(o);
-});
+data[L].age.forEach(x=>{let o=document.createElement("option"); o.text=o.value=x; age.add(o);});
 
+// Karakterler
 q1.innerText=data[L].q1;
-q2.innerText=data[L].q2;
-
 charOpts.innerHTML="";
 data[L].chars.forEach(c=>{
 let d=document.createElement("div");
 d.className="option"; d.innerText=c; d.dataset.value=c;
-d.onclick=()=>{document.querySelectorAll("#charOpts .option").forEach(o=>o.classList.remove("active"));d.classList.add("active");character=c;};
+d.onclick=()=>{document.querySelectorAll("#charOpts .option").forEach(o=>o.classList.remove("active")); d.classList.add("active"); character=c;};
 charOpts.appendChild(d);
 });
 
+// Korkular
+q2.innerText=data[L].q2;
 fearOpts.innerHTML="";
 data[L].fears.forEach(f=>{
 let d=document.createElement("div");
 d.className="option"; d.innerText=f; d.dataset.value=f;
-d.onclick=()=>{document.querySelectorAll("#fearOpts .option").forEach(o=>o.classList.remove("active"));d.classList.add("active");fear=f;};
+d.onclick=()=>{document.querySelectorAll("#fearOpts .option").forEach(o=>o.classList.remove("active")); d.classList.add("active"); fear=f;};
 fearOpts.appendChild(d);
 });
 }
 
+// Düzeltilmiş finish
 function finish(){
-const n=name.value.trim();
-if(n==="" || !character || !fear || gender.value=="" || age.value==""){alert("Lütfen tüm alanları doldur");return;}
-form.classList.add("hidden"); result.classList.remove("hidden");
-resTitle.innerText=data[L].res;
-story.innerText=data[L].stories[character].replace("{name}",n);
-animal.innerText=data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
-advice.innerText=data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
+  const n = name.value.trim();
+  const g = gender.value;
+  const a = age.value;
+
+  const charEl = document.querySelector("#charOpts .option.active");
+  const fearEl = document.querySelector("#fearOpts .option.active");
+
+  if(!n || !g || !a || !charEl || !fearEl){
+    alert("Lütfen tüm alanları doldur");
+    return;
+  }
+
+  character = charEl.dataset.value;
+  fear = fearEl.dataset.value;
+
+  form.classList.add("hidden");
+  result.classList.remove("hidden");
+
+  resTitle.innerText = data[L].res;
+  story.innerText = data[L].stories[character].replace("{name}", n);
+  animal.innerText = data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
+  advice.innerText = data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
 }
 
 // MUSİQİ
@@ -245,6 +255,7 @@ if(clicks>=3){document.getElementById("magicContent").style.display="block"; mag
 else magicText.innerText=`Kutu açmak için ${3-clicks} klik kaldı!`;
 });
 </script>
+
 <audio id="music" loop></audio>
 </body>
 </html>

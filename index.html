@@ -1,165 +1,159 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="">
 <head>
 <meta charset="UTF-8">
-<title>UstadHikaye – Kişilik ve Karakter Hikayen</title>
+<title>UstadHikaye</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-margin:0;
-font-family:Segoe UI, sans-serif;
+margin:0;font-family:Segoe UI,sans-serif;color:#fff;
 background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#000);
-background-size:400% 400%;
-animation:bg 15s ease infinite;
-color:#fff;
+background-size:400% 400%;animation:bg 15s ease infinite;
 }
 @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 .container{max-width:430px;margin:auto;padding:20px}
 .card{background:rgba(0,0,0,.65);padding:22px;border-radius:22px;margin-bottom:20px}
 h1{text-align:center}
-input,select,button{
-width:100%;padding:12px;margin-top:10px;
-border-radius:12px;border:none;font-size:16px
-}
+input,select,button{width:100%;padding:12px;margin-top:10px;border-radius:12px;border:none;font-size:16px}
 button{background:#ff9800;font-weight:bold;cursor:pointer}
-.radio-group{display:flex;gap:10px;margin-top:10px}
-.radio-group button{flex:1}
-.story{line-height:1.7;margin-top:10px}
-.magic-box{font-size:50px;text-align:center;cursor:pointer;margin:15px}
+.flags{display:flex;justify-content:center;gap:10px;margin:15px 0}
+.flags img{width:45px;cursor:pointer;border-radius:6px;border:2px solid transparent}
+.flags img.active{border:2px solid yellow}
 .hidden{display:none}
+.magic{font-size:50px;text-align:center;cursor:pointer;margin:15px}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<!-- STEP 1 -->
-<div class="card" id="step1">
-<h1>Hoş geldin</h1>
-<input id="name" placeholder="Adın">
-<div class="radio-group">
-<button onclick="setGender('erkek')">👨 Erkek</button>
-<button onclick="setGender('kadin')">👩 Kadın</button>
+<!-- STEP 0 DIL -->
+<div class="card" id="stepLang">
+<h1 id="welcome">Hikayeni Bul</h1>
+<div class="flags">
+<img src="https://flagcdn.com/tr.svg" onclick="setLang('tr',this)" class="active">
+<img src="https://flagcdn.com/az.svg" onclick="setLang('az',this)">
+<img src="https://flagcdn.com/us.svg" onclick="setLang('en',this)">
+</div>
+<button onclick="goStep1()">İleri</button>
 </div>
 
-<label>Yaşın: <b id="ageShow">18</b></label>
+<!-- STEP 1 -->
+<div class="card hidden" id="step1">
+<h1 id="step1title"></h1>
+<input id="name" placeholder="">
+<div style="display:flex;gap:10px">
+<button onclick="gender='erkek'">👨</button>
+<button onclick="gender='kadin'">👩</button>
+</div>
+<label id="ageLabel"></label>
 <input type="range" min="10" max="70" value="18" oninput="ageShow.innerText=this.value">
-
+<b id="ageShow">18</b>
 <button onclick="goStep2()">İleri</button>
 </div>
 
 <!-- STEP 2 -->
 <div class="card hidden" id="step2">
-<h1>Seni Tanıyalım</h1>
+<label id="powerLabel"></label>
+<select id="power"></select>
 
-<label>Nasıl birisin?</label>
-<select id="power">
-<option value="">Seç</option>
-<option>Lider</option>
-<option>Sabırlı</option>
-<option>Cesur</option>
-<option>Akıllı</option>
-</select>
-
-<label>Neden korkuyorsun?</label>
-<select id="fear">
-<option value="">Seç</option>
-<option>Karanlık</option>
-<option>Yalnız kalmak</option>
-<option>Kaybetmek</option>
-<option>Bilinmezlik</option>
-</select>
+<label id="fearLabel"></label>
+<select id="fear"></select>
 
 <button onclick="generate()">Hikayeni Gör</button>
 </div>
 
 <!-- RESULT -->
 <div class="card hidden" id="result">
-<div class="story" id="story"></div>
-
-<div class="magic-box" onclick="openBox()">🔮</div>
-<p id="boxText">Kutuyu 3 kez tıkla</p>
+<div id="story"></div>
+<div class="magic" onclick="openBox()">🔮</div>
+<p id="boxText"></p>
 
 <div id="magicContent" class="hidden">
-<button onclick="playMusic()">🎵 Müziği Başlat</button>
+<button onclick="playMusic()">🎵</button>
 <p id="character"></p>
 <p id="animal"></p>
 <p id="advice"></p>
-
 <button onclick="shareWA()">WhatsApp</button>
-<button onclick="alert('Instagram app üzerinden paylaşılır')">Instagram</button>
-<button onclick="alert('TikTok app üzerinden paylaşılır')">TikTok</button>
 </div>
 </div>
 
 <audio id="music"></audio>
 
 <script>
-let gender="", boxClick=0;
+let lang="tr",gender="",box=0;
 
-function setGender(g){gender=g}
+const texts={
+tr:{
+welcome:"Hikayeni Bul",
+step1:"Seni Tanıyalım",
+name:"Adın",
+age:"Yaşın",
+power:"Nasıl birisin?",
+fear:"Neden korkuyorsun?",
+powers:["Lider","Sabırlı","Cesur","Akıllı"],
+fears:["Karanlık","Yalnızlık","Kaybetmek","Bilinmezlik"]
+},
+az:{
+welcome:"Hekayəni Tap",
+step1:"Səni Tanıyaq",
+name:"Adın",
+age:"Yaşın",
+power:"Necə birisən?",
+fear:"Nədən qorxursan?",
+powers:["Lider","Səbirli","Cəsur","Ağıllı"],
+fears:["Qaranlıq","Təklik","İtirmək","Naməlumluq"]
+},
+en:{
+welcome:"Find Your Story",
+step1:"Tell Us About You",
+name:"Your Name",
+age:"Your Age",
+power:"What are you like?",
+fear:"What do you fear?",
+powers:["Leader","Patient","Brave","Smart"],
+fears:["Darkness","Loneliness","Loss","Unknown"]
+}
+};
+
+function setLang(l,el){
+lang=l;
+document.querySelectorAll(".flags img").forEach(i=>i.classList.remove("active"));
+el.classList.add("active");
+welcome.innerText=texts[l].welcome;
+}
+
+function goStep1(){
+stepLang.classList.add("hidden");
+step1.classList.remove("hidden");
+step1title.innerText=texts[lang].step1;
+name.placeholder=texts[lang].name;
+ageLabel.innerText=texts[lang].age;
+}
 
 function goStep2(){
 if(!gender){alert("Cinsiyet seç");return;}
 step1.classList.add("hidden");
 step2.classList.remove("hidden");
+powerLabel.innerText=texts[lang].power;
+fearLabel.innerText=texts[lang].fear;
+
+power.innerHTML='<option value="">Seç</option>'+texts[lang].powers.map(p=>`<option>${p}</option>`).join('');
+fear.innerHTML='<option value="">Seç</option>'+texts[lang].fears.map(f=>`<option>${f}</option>`).join('');
 }
 
 function generate(){
-let name=nameInput();
-let age=document.querySelector("input[type=range]").value;
-let power=powerSel();
-let fear=fearSel();
-
-if(!power||!fear){alert("Tüm seçimleri yap");return;}
-
 step2.classList.add("hidden");
 result.classList.remove("hidden");
-
-let characterText = buildCharacter(gender, age, power);
-
-story.innerText =
-`${name}, ${age} yaşında ${power.toLowerCase()} ruhlu bir ${
-gender=="erkek"?"erkek":"kadın"
-}. 
-Hayatında ${fear.toLowerCase()} seni sınasa da, karakterin seni hep ayakta tutar.`;
-
-character.innerText="🧠 Karakterin: "+characterText;
-animal.innerText="🐾 Ruh Hayvanın: "+random(["Kurt","Aslan","Kartal","Panter","Ayı"]);
-advice.innerText="💡 Tavsiye: "+random([
-"Yoluna inan",
-"Geri çekilme",
-"Kendine güven",
-"Gücünü küçümseme"
-]);
-
-music.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-"+(Math.floor(Math.random()*16)+1)+".mp3";
+story.innerText=`${name.value||""}, güçlü bir yolculuğun içindesin.`;
+animal.innerText="🐾 "+["Kurt","Aslan","Kartal","Panter"][Math.floor(Math.random()*4)];
+advice.innerText="💡 "+["Kendine inan","Yolundan dönme","Gücünü unutma"][Math.floor(Math.random()*3)];
+music.src=`https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${Math.floor(Math.random()*16)+1}.mp3`;
 }
 
-function buildCharacter(g,a,p){
-if(g=="erkek" && p=="Lider") return "Doğuştan Lider Erkek";
-if(g=="kadin" && p=="Lider") return "Güçlü Lider Kadın";
-if(g=="kadin" && p=="Sabırlı") return "Derin Ruhlu Kadın";
-if(g=="erkek" && p=="Cesur") return "Savaşçı Ruh Erkek";
-return p+" Karakter";
-}
-
-function openBox(){
-boxClick++;
-boxText.innerText=`${3-boxClick} tık kaldı`;
-if(boxClick>=3) magicContent.classList.remove("hidden");
-}
-
+function openBox(){box++;if(box>=3)magicContent.classList.remove("hidden")}
 function playMusic(){music.play()}
-function shareWA(){
-window.open("https://wa.me/?text="+encodeURIComponent(story.innerText))
-}
-
-function random(arr){return arr[Math.floor(Math.random()*arr.length)]}
-function nameInput(){return document.getElementById("name").value||"Sen"}
-function powerSel(){return document.getElementById("power").value}
-function fearSel(){return document.getElementById("fear").value}
+function shareWA(){window.open("https://wa.me/?text="+encodeURIComponent(story.innerText))}
 </script>
-
 </body>
 </html>

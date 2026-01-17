@@ -157,44 +157,62 @@ input::placeholder{color:#ccc}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
 .hidden{display:none}
+
+/* ==== language flags ==== */
+.flags img{
+  width:40px;
+  height:25px;
+  margin:0 5px;
+  cursor:pointer;
+  border-radius:5px;
+  border:2px solid #fff;
+}
+.flags img.selected{border:2px solid yellow;}
 </style>
 </head>
-
 <body>
 <div class="stars"></div>
 
 <div class="app">
 
-  <!-- STEP 1 -->
+  <!-- STEP 1: LANGUAGE -->
   <div id="step1">
-    <h1>Hikayeni Bul</h1>
-    <p class="subtitle">İçindeki karakteri keşfet</p>
+    <h1 id="welcomeText">Hikayeni Bul</h1>
+    <p class="subtitle" id="subText">İçindeki karakteri keşfet</p>
+    <div class="flags">
+      <img src="https://flagcdn.com/tr.svg" alt="TR" onclick="setLang('tr',this)" class="selected">
+      <img src="https://flagcdn.com/az.svg" alt="AZ" onclick="setLang('az',this)">
+      <img src="https://flagcdn.com/us.svg" alt="EN" onclick="setLang('en',this)">
+    </div>
     <button onclick="nextStep()">Başla</button>
   </div>
 
-  <!-- STEP 2 -->
+  <!-- STEP 2: CHARACTER -->
   <div id="step2" class="hidden fade">
-    <h1>Seni Tanıyalım</h1>
+    <h1 id="step2Title">Seni Tanıyalım</h1>
     <input id="name" placeholder="İsmini yaz">
+    
+    <h3 id="traitTitle">Karakterini Seç:</h3>
     <div class="options">
       <div class="option" onclick="selectTrait(this,'lider')">Lider</div>
       <div class="option" onclick="selectTrait(this,'bilge')">Bilge</div>
       <div class="option" onclick="selectTrait(this,'cesur')">Cesur</div>
       <div class="option" onclick="selectTrait(this,'sessiz')">Sessiz Güç</div>
     </div>
+
     <button onclick="createStory()">Hikayeni Gör</button>
   </div>
 
   <!-- RESULT -->
   <div id="result" class="hidden fade">
-    <h1>Senin Hikayen</h1>
+    <h1 id="storyTitle">Senin Hikayen</h1>
     <div class="story" id="story"></div>
 
     <div class="orb-wrap">
       <div class="orb">🔮</div>
-      <p style="margin-top:10px;font-size:13px;opacity:.85">
-        Bu enerji senin yolunu temsil ediyor
-      </p>
+      <p id="animalText" style="margin-top:10px;font-size:15px;opacity:.85"></p>
+      <p id="adviceText" style="margin-top:6px;font-size:15px;opacity:.85"></p>
+      <button onclick="playMusic()">🎵 Müziği Başlat</button>
     </div>
 
     <button onclick="location.reload()">Yeniden Dene</button>
@@ -202,33 +220,99 @@ input::placeholder{color:#ccc}
 
 </div>
 
+<audio id="music" loop></audio>
+
 <script>
 let trait="";
+let lang="tr";
+
+// Dil Seçimi
+function setLang(l,el){
+  lang=l;
+  document.querySelectorAll(".flags img").forEach(i=>i.classList.remove("selected"));
+  el.classList.add("selected");
+
+  const welcomeText=document.getElementById("welcomeText");
+  const subText=document.getElementById("subText");
+  if(lang==='tr'){welcomeText.innerText="Hikayeni Bul"; subText.innerText="İçindeki karakteri keşfet";}
+  if(lang==='az'){welcomeText.innerText="Hekayəni Tap"; subText.innerText="Daxilindəki xarakteri kəşf et";}
+  if(lang==='en'){welcomeText.innerText="Find Your Story"; subText.innerText="Discover your inner character";}
+}
 
 function nextStep(){
   step1.classList.add("hidden");
   step2.classList.remove("hidden");
 }
 
+// Karakter Seçimi
 function selectTrait(el,val){
   document.querySelectorAll(".option").forEach(o=>o.classList.remove("active"));
   el.classList.add("active");
   trait=val;
 }
 
+// Hikaye Oluşturma
 function createStory(){
   let name=document.getElementById("name").value || "Sen";
 
   const stories={
-    lider:`${name}, sen doğuştan lider ruhlusun. İnsanlar fark etmese bile, bulunduğun ortamın enerjisini değiştiriyorsun. Yalnız yürüdüğün yollar seni güçlü kılıyor.`,
-    bilge:`${name}, sen az konuşup çok düşünenlerdensin. Sessizliğin içinde büyük bir bilgelik var. Zaman senin lehine çalışıyor.`,
-    cesur:`${name}, korkunun üstüne yürüyenlerdensin. Her adımın bir sınav ama sen geri dönmüyorsun. Cesaret senin imzan.`,
-    sessiz:`${name}, sen görünmeyen ama hissedilen güçsün. Herkes konuşurken sen izlersin ve en doğru anda hamleni yaparsın.`
+    lider:{
+      tr:`${name}, sen doğuştan lider ruhlusun. İnsanlar fark etmese bile, bulunduğun ortamın enerjisini değiştiriyorsun. Yalnız yürüdüğün yollar seni güçlü kılıyor.`,
+      az:`${name}, sən doğuşdan lider ruhlusan. İnsanlar fərq etməsə də, olduğun mühitin enerjisini dəyişirsən. Tək addımladığın yollar səni gücləndirir.`,
+      en:`${name}, you are a born leader. Even if people don't notice, you change the energy of the environment. Walking alone strengthens you.`
+    },
+    bilge:{
+      tr:`${name}, sen az konuşup çok düşünenlerdensin. Sessizliğin içinde büyük bir bilgelik var. Zaman senin lehine çalışıyor.`,
+      az:`${name}, sən az danışıb çox düşünənlərdənsən. Sükutda böyük hikmət var. Zaman sənin xeyrinə işləyir.`,
+      en:`${name}, you speak little but think a lot. There is great wisdom in your silence. Time works in your favor.`
+    },
+    cesur:{
+      tr:`${name}, korkunun üstüne yürüyenlerdensin. Her adımın bir sınav ama sen geri dönmüyorsun. Cesaret senin imzan.`,
+      az:`${name}, qorxunun üstünə gedənlərdənsən. Hər addımın bir sınaqdır amma geri dönmürsən. Cəsarət imzan.`,
+      en:`${name}, you are one who walks over fear. Every step is a challenge but you do not turn back. Courage is your signature.`
+    },
+    sessiz:{
+      tr:`${name}, sen görünmeyen ama hissedilen güçsün. Herkes konuşurken sen izlersin ve en doğru anda hamleni yaparsın.`,
+      az:`${name}, sən görünməyən amma hiss edilən gücsən. Hamı danışarkən sən izləyirsən və ən doğru anda hərəkət edirsən.`,
+      en:`${name}, you are the unseen but felt strength. While everyone talks, you observe and act at the right moment.`
+    }
   };
+
+  // Heyvan ve Tavsiyeler
+  const animals=["🐺 Kurt","🦁 Aslan","🦅 Kartal","🐯 Kaplan","🦊 Tilki"];
+  const advices=[
+    "Yoluna inan ve devam et.",
+    "Küçük adımlar büyük değişim yaratır.",
+    "Cesaret her zaman ödüllendirilir.",
+    "Sabırla ilerle ve yılma.",
+    "İç sesini dinle ve güven."
+  ];
+
+  const storyText=stories[trait][lang] || `${name}, keşfedilmeyi bekleyen bir hikaye var.`;
+  document.getElementById("story").innerText=storyText;
+
+  // Rastgele hayvan ve tavsiye
+  document.getElementById("animalText").innerText="Ruh Hayvanın: "+animals[Math.floor(Math.random()*animals.length)];
+  document.getElementById("adviceText").innerText="Tavsiye: "+advices[Math.floor(Math.random()*advices.length)];
+
+  // Melodi (farklı)
+  const melodies=[
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+  ];
+  document.getElementById("music").src=melodies[Math.floor(Math.random()*melodies.length)];
 
   step2.classList.add("hidden");
   result.classList.remove("hidden");
-  story.innerText=stories[trait] || `${name}, içinde keşfedilmeyi bekleyen büyük bir hikaye var.`;
+}
+
+// Müzik Başlat
+function playMusic(){
+  const music=document.getElementById("music");
+  music.play().catch(err=>{
+    alert("Telefonunuzda sesi açmak için düğmeye basın.");
+  });
 }
 </script>
 </body>

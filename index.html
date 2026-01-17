@@ -1,159 +1,235 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>UstadHikaye</title>
+<title>Hikayeni Bul</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-margin:0;font-family:Segoe UI,sans-serif;color:#fff;
-background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#000);
-background-size:400% 400%;animation:bg 15s ease infinite;
+  font-family:'Poppins',sans-serif;
+  height:100vh;
+  background:
+    radial-gradient(circle at top,#1b2735,#090a0f 60%),
+    linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+  background-blend-mode:screen;
+  color:#fff;
+  overflow:hidden;
 }
-@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.container{max-width:430px;margin:auto;padding:20px}
-.card{background:rgba(0,0,0,.65);padding:22px;border-radius:22px;margin-bottom:20px}
-h1{text-align:center}
-input,select,button{width:100%;padding:12px;margin-top:10px;border-radius:12px;border:none;font-size:16px}
-button{background:#ff9800;font-weight:bold;cursor:pointer}
-.flags{display:flex;justify-content:center;gap:10px;margin:15px 0}
-.flags img{width:45px;cursor:pointer;border-radius:6px;border:2px solid transparent}
-.flags img.active{border:2px solid yellow}
+
+/* ==== animated stars ==== */
+.stars{
+  position:fixed;inset:0;
+  background:url("https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png");
+  animation:moveStars 120s linear infinite;
+  opacity:.4;
+}
+@keyframes moveStars{
+  from{background-position:0 0}
+  to{background-position:-5000px 2000px}
+}
+
+/* ==== main card ==== */
+.app{
+  position:relative;
+  max-width:420px;
+  margin:auto;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(10,15,25,.65);
+  backdrop-filter:blur(18px);
+  border-radius:28px;
+  padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.7);
+  animation:appIn 1.2s ease;
+}
+@keyframes appIn{
+  from{opacity:0;transform:translateY(-40%) scale(.9)}
+  to{opacity:1;transform:translateY(-50%) scale(1)}
+}
+
+h1{
+  font-size:30px;
+  text-align:center;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+p.subtitle{
+  text-align:center;
+  opacity:.85;
+  margin-top:8px;
+  font-size:14px;
+}
+
+/* ==== buttons ==== */
+button{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  background:linear-gradient(135deg,#ff9800,#ff5722);
+  color:#000;
+  transition:.3s;
+}
+button:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 10px 25px rgba(255,152,0,.4);
+}
+
+/* ==== inputs ==== */
+input{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:rgba(255,255,255,.1);
+  color:#fff;
+  font-size:15px;
+}
+input::placeholder{color:#ccc}
+
+/* ==== options ==== */
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+}
+.option{
+  padding:14px;
+  text-align:center;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  cursor:pointer;
+  transition:.3s;
+}
+.option:hover{background:rgba(255,255,255,.18)}
+.option.active{
+  background:linear-gradient(135deg,#4caf50,#8bc34a);
+  color:#000;
+  font-weight:700;
+}
+
+/* ==== story ==== */
+.story{
+  margin-top:20px;
+  line-height:1.8;
+  font-size:15px;
+  animation:textFade 1s ease;
+}
+@keyframes textFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+/* ==== magic orb ==== */
+.orb-wrap{
+  margin-top:26px;
+  text-align:center;
+}
+.orb{
+  width:110px;height:110px;
+  margin:auto;
+  border-radius:50%;
+  background:radial-gradient(circle,#ffeb3b,#ff9800,#ff5722);
+  box-shadow:0 0 40px gold;
+  animation:orbPulse 2s infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:44px;
+}
+@keyframes orbPulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.12)}
+  100%{transform:scale(1)}
+}
+
+.fade{animation:fade .6s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
 .hidden{display:none}
-.magic{font-size:50px;text-align:center;cursor:pointer;margin:15px}
 </style>
 </head>
 
 <body>
-<div class="container">
+<div class="stars"></div>
 
-<!-- STEP 0 DIL -->
-<div class="card" id="stepLang">
-<h1 id="welcome">Hikayeni Bul</h1>
-<div class="flags">
-<img src="https://flagcdn.com/tr.svg" onclick="setLang('tr',this)" class="active">
-<img src="https://flagcdn.com/az.svg" onclick="setLang('az',this)">
-<img src="https://flagcdn.com/us.svg" onclick="setLang('en',this)">
+<div class="app">
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <h1>Hikayeni Bul</h1>
+    <p class="subtitle">İçindeki karakteri keşfet</p>
+    <button onclick="nextStep()">Başla</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="hidden fade">
+    <h1>Seni Tanıyalım</h1>
+    <input id="name" placeholder="İsmini yaz">
+    <div class="options">
+      <div class="option" onclick="selectTrait(this,'lider')">Lider</div>
+      <div class="option" onclick="selectTrait(this,'bilge')">Bilge</div>
+      <div class="option" onclick="selectTrait(this,'cesur')">Cesur</div>
+      <div class="option" onclick="selectTrait(this,'sessiz')">Sessiz Güç</div>
+    </div>
+    <button onclick="createStory()">Hikayeni Gör</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="hidden fade">
+    <h1>Senin Hikayen</h1>
+    <div class="story" id="story"></div>
+
+    <div class="orb-wrap">
+      <div class="orb">🔮</div>
+      <p style="margin-top:10px;font-size:13px;opacity:.85">
+        Bu enerji senin yolunu temsil ediyor
+      </p>
+    </div>
+
+    <button onclick="location.reload()">Yeniden Dene</button>
+  </div>
+
 </div>
-<button onclick="goStep1()">İleri</button>
-</div>
-
-<!-- STEP 1 -->
-<div class="card hidden" id="step1">
-<h1 id="step1title"></h1>
-<input id="name" placeholder="">
-<div style="display:flex;gap:10px">
-<button onclick="gender='erkek'">👨</button>
-<button onclick="gender='kadin'">👩</button>
-</div>
-<label id="ageLabel"></label>
-<input type="range" min="10" max="70" value="18" oninput="ageShow.innerText=this.value">
-<b id="ageShow">18</b>
-<button onclick="goStep2()">İleri</button>
-</div>
-
-<!-- STEP 2 -->
-<div class="card hidden" id="step2">
-<label id="powerLabel"></label>
-<select id="power"></select>
-
-<label id="fearLabel"></label>
-<select id="fear"></select>
-
-<button onclick="generate()">Hikayeni Gör</button>
-</div>
-
-<!-- RESULT -->
-<div class="card hidden" id="result">
-<div id="story"></div>
-<div class="magic" onclick="openBox()">🔮</div>
-<p id="boxText"></p>
-
-<div id="magicContent" class="hidden">
-<button onclick="playMusic()">🎵</button>
-<p id="character"></p>
-<p id="animal"></p>
-<p id="advice"></p>
-<button onclick="shareWA()">WhatsApp</button>
-</div>
-</div>
-
-<audio id="music"></audio>
 
 <script>
-let lang="tr",gender="",box=0;
+let trait="";
 
-const texts={
-tr:{
-welcome:"Hikayeni Bul",
-step1:"Seni Tanıyalım",
-name:"Adın",
-age:"Yaşın",
-power:"Nasıl birisin?",
-fear:"Neden korkuyorsun?",
-powers:["Lider","Sabırlı","Cesur","Akıllı"],
-fears:["Karanlık","Yalnızlık","Kaybetmek","Bilinmezlik"]
-},
-az:{
-welcome:"Hekayəni Tap",
-step1:"Səni Tanıyaq",
-name:"Adın",
-age:"Yaşın",
-power:"Necə birisən?",
-fear:"Nədən qorxursan?",
-powers:["Lider","Səbirli","Cəsur","Ağıllı"],
-fears:["Qaranlıq","Təklik","İtirmək","Naməlumluq"]
-},
-en:{
-welcome:"Find Your Story",
-step1:"Tell Us About You",
-name:"Your Name",
-age:"Your Age",
-power:"What are you like?",
-fear:"What do you fear?",
-powers:["Leader","Patient","Brave","Smart"],
-fears:["Darkness","Loneliness","Loss","Unknown"]
-}
-};
-
-function setLang(l,el){
-lang=l;
-document.querySelectorAll(".flags img").forEach(i=>i.classList.remove("active"));
-el.classList.add("active");
-welcome.innerText=texts[l].welcome;
+function nextStep(){
+  step1.classList.add("hidden");
+  step2.classList.remove("hidden");
 }
 
-function goStep1(){
-stepLang.classList.add("hidden");
-step1.classList.remove("hidden");
-step1title.innerText=texts[lang].step1;
-name.placeholder=texts[lang].name;
-ageLabel.innerText=texts[lang].age;
+function selectTrait(el,val){
+  document.querySelectorAll(".option").forEach(o=>o.classList.remove("active"));
+  el.classList.add("active");
+  trait=val;
 }
 
-function goStep2(){
-if(!gender){alert("Cinsiyet seç");return;}
-step1.classList.add("hidden");
-step2.classList.remove("hidden");
-powerLabel.innerText=texts[lang].power;
-fearLabel.innerText=texts[lang].fear;
+function createStory(){
+  let name=document.getElementById("name").value || "Sen";
 
-power.innerHTML='<option value="">Seç</option>'+texts[lang].powers.map(p=>`<option>${p}</option>`).join('');
-fear.innerHTML='<option value="">Seç</option>'+texts[lang].fears.map(f=>`<option>${f}</option>`).join('');
+  const stories={
+    lider:`${name}, sen doğuştan lider ruhlusun. İnsanlar fark etmese bile, bulunduğun ortamın enerjisini değiştiriyorsun. Yalnız yürüdüğün yollar seni güçlü kılıyor.`,
+    bilge:`${name}, sen az konuşup çok düşünenlerdensin. Sessizliğin içinde büyük bir bilgelik var. Zaman senin lehine çalışıyor.`,
+    cesur:`${name}, korkunun üstüne yürüyenlerdensin. Her adımın bir sınav ama sen geri dönmüyorsun. Cesaret senin imzan.`,
+    sessiz:`${name}, sen görünmeyen ama hissedilen güçsün. Herkes konuşurken sen izlersin ve en doğru anda hamleni yaparsın.`
+  };
+
+  step2.classList.add("hidden");
+  result.classList.remove("hidden");
+  story.innerText=stories[trait] || `${name}, içinde keşfedilmeyi bekleyen büyük bir hikaye var.`;
 }
-
-function generate(){
-step2.classList.add("hidden");
-result.classList.remove("hidden");
-story.innerText=`${name.value||""}, güçlü bir yolculuğun içindesin.`;
-animal.innerText="🐾 "+["Kurt","Aslan","Kartal","Panter"][Math.floor(Math.random()*4)];
-advice.innerText="💡 "+["Kendine inan","Yolundan dönme","Gücünü unutma"][Math.floor(Math.random()*3)];
-music.src=`https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${Math.floor(Math.random()*16)+1}.mp3`;
-}
-
-function openBox(){box++;if(box>=3)magicContent.classList.remove("hidden")}
-function playMusic(){music.play()}
-function shareWA(){window.open("https://wa.me/?text="+encodeURIComponent(story.innerText))}
 </script>
 </body>
 </html>

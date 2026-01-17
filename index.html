@@ -24,7 +24,7 @@ body{
   animation:fadeIn 1s ease;
 }
 h1,h2{text-align:center;margin-bottom:15px}
-p{text-align:center;opacity:.85;margin-bottom:20px}
+p{text-align:center;opacity:.85;margin-bottom:15px}
 button{
   width:100%;
   padding:14px;
@@ -35,7 +35,7 @@ button{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
-  margin-top:10px;
+  margin-top:12px;
 }
 button:hover{opacity:.85}
 input,select{
@@ -48,19 +48,32 @@ input,select{
 }
 .hidden{display:none}
 
+/* SEÇENEKLER */
 .option{
-  background:rgba(255,255,255,.1);
-  padding:12px;
-  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  padding:14px;
+  border-radius:12px;
   margin-bottom:10px;
   cursor:pointer;
+  text-align:center;
+  transition:.25s;
+  border:2px solid transparent;
 }
-.option:hover{background:rgba(255,255,255,.2)}
+.option:hover{
+  background:rgba(255,255,255,.15);
+}
+.option.active{
+  background:rgba(0,200,100,.25);
+  border-color:#00ff9c;
+  box-shadow:0 0 12px rgba(0,255,160,.6);
+  transform:scale(1.03);
+}
 
 @keyframes fadeIn{
   from{opacity:0;transform:scale(.95)}
   to{opacity:1;transform:scale(1)}
 }
+
 .result-box{
   background:rgba(255,255,255,.08);
   padding:15px;
@@ -68,7 +81,7 @@ input,select{
   margin-top:15px;
 }
 .animal{
-  font-size:48px;
+  font-size:52px;
   text-align:center;
   margin:10px 0;
 }
@@ -94,9 +107,7 @@ input,select{
 
   <input id="name" placeholder="">
   
-  <select id="gender">
-    <option value="">---</option>
-  </select>
+  <select id="gender"></select>
 
   <select id="age">
     <option value="">---</option>
@@ -146,11 +157,12 @@ Sakin:"{name}, iç huzurun en büyük gücün. Zor zamanlarda bile ayakta kalır
 Cesur:"{name}, korkularının üzerine yürüyen nadir insanlardansın.",
 Düşünceli:"{name}, derin düşünen ve sezgileri güçlü birisin."
 },
-animals:["🐺","🦅","🦁","🐉"],
+animals:["🐺","🦅","🦁","🐉","🐍","🦊"],
 advices:[
 "Gücünü küçümseme.",
 "Yalnız kalmaktan korkma.",
-"Kendin olmaktan vazgeçme."
+"Kendin olmaktan vazgeçme.",
+"Sabırlı ol, zaman seninle."
 ]
 },
 az:{
@@ -168,11 +180,12 @@ Sakit:"{name}, daxili sakitliyin səni güclü edir.",
 Cəsur:"{name}, qorxuların üzərinə gedənlərdənsən.",
 Düşüncəli:"{name}, dərin düşüncələrinlə seçilirsən."
 },
-animals:["🐺","🦅","🦁","🐉"],
+animals:["🐺","🦅","🦁","🐉","🦊"],
 advices:[
 "Öz gücünə inan.",
-"Tələsmə, hər şey zamanla.",
-"Səbirli ol."
+"Tələsmə.",
+"Səbirli ol.",
+"Öz yolundan dönmə."
 ]
 },
 en:{
@@ -190,11 +203,12 @@ Calm:"{name}, your calm mind is your strength.",
 Brave:"{name}, you face fears head-on.",
 Thoughtful:"{name}, your mind sees what others miss."
 },
-animals:["🐺","🦅","🦁","🐉"],
+animals:["🐺","🦅","🦁","🐉","🦊"],
 advices:[
 "Trust yourself.",
-"Do not fear being alone.",
-"Move forward with courage."
+"Stay patient.",
+"Move forward.",
+"Never give up."
 ]
 }
 };
@@ -204,26 +218,29 @@ L=l;
 document.getElementById("lang").classList.add("hidden");
 document.getElementById("form").classList.remove("hidden");
 
-document.getElementById("formTitle").innerText=data[L].title;
-document.getElementById("name").placeholder=data[L].name;
+formTitle.innerText=data[L].title;
+name.placeholder=data[L].name;
 
-const g=document.getElementById("gender");
-g.innerHTML="";
+gender.innerHTML="";
 data[L].gender.forEach(x=>{
 let o=document.createElement("option");
 o.text=o.value=x;
-g.add(o);
+gender.add(o);
 });
 
-document.getElementById("q1").innerText=data[L].q1;
-document.getElementById("q2").innerText=data[L].q2;
+q1.innerText=data[L].q1;
+q2.innerText=data[L].q2;
 
 charOpts.innerHTML="";
 data[L].chars.forEach(c=>{
 let d=document.createElement("div");
 d.className="option";
 d.innerText=c;
-d.onclick=()=>character=c;
+d.onclick=()=>{
+document.querySelectorAll("#charOpts .option").forEach(o=>o.classList.remove("active"));
+d.classList.add("active");
+character=c;
+};
 charOpts.appendChild(d);
 });
 
@@ -232,28 +249,29 @@ data[L].fears.forEach(f=>{
 let d=document.createElement("div");
 d.className="option";
 d.innerText=f;
-d.onclick=()=>fear=f;
+d.onclick=()=>{
+document.querySelectorAll("#fearOpts .option").forEach(o=>o.classList.remove("active"));
+d.classList.add("active");
+fear=f;
+};
 fearOpts.appendChild(d);
 });
 }
 
 function finish(){
-const name=document.getElementById("name").value;
-if(!name||!character||!fear){alert("Lütfen tüm alanları doldur");return;}
+const n=name.value;
+if(!n||!character||!fear){alert("Lütfen tüm alanları doldur");return;}
 
-document.getElementById("form").classList.add("hidden");
-document.getElementById("result").classList.remove("hidden");
+form.classList.add("hidden");
+result.classList.remove("hidden");
 
-document.getElementById("resTitle").innerText=data[L].res;
+resTitle.innerText=data[L].res;
 
-let s=data[L].stories[character].replace("{name}",name);
-document.getElementById("story").innerText=s;
+story.innerText=data[L].stories[character].replace("{name}",n);
 
-document.getElementById("animal").innerText=
-data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
+animal.innerText=data[L].animals[Math.floor(Math.random()*data[L].animals.length)];
 
-document.getElementById("advice").innerText=
-data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
+advice.innerText=data[L].advices[Math.floor(Math.random()*data[L].advices.length)];
 }
 </script>
 
